@@ -137,18 +137,18 @@ body {
 }
 
 /* ── PHASE SELECTOR ── */
-.phase-nav { padding:24px 40px 0; display:flex; gap:12px; }
+.phase-nav { padding:12px 32px 0; display:flex; gap:10px; }
 .phase-card {
-  flex:1; background:var(--surface); border-radius:var(--radius); border:1.5px solid var(--border);
-  padding:18px 20px; cursor:pointer; transition:all .2s; position:relative; overflow:hidden;
+  flex:1; background:var(--surface); border-radius:10px; border:1.5px solid var(--border);
+  padding:10px 16px; cursor:pointer; transition:all .2s; position:relative; overflow:hidden;
 }
 .phase-card:hover { border-color:var(--brand-lt); transform:translateY(-1px); box-shadow:var(--shadow); }
 .phase-card.active { border-color:var(--brand); box-shadow:var(--shadow-md); }
 .phase-card.active::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--brand); }
-.phase-indicator { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
-.phase-dot { width:8px; height:8px; border-radius:50%; }
+.phase-indicator { display:flex; align-items:center; gap:6px; margin-bottom:3px; }
+.phase-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
 .phase-num { font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; }
-.phase-name { font-weight:800; font-size:14px; color:var(--text-main); margin-bottom:3px; font-family:"MoMo Trust Sans","Inter","Nunito",sans-serif; }
+.phase-name { font-weight:800; font-size:13px; color:var(--text-main); margin-bottom:0; font-family:"MoMo Trust Sans","Inter","Nunito",sans-serif; }
 .phase-desc { font-size:12px; color:var(--text-sub); line-height:1.5; }
 .phase-steps { display:flex; gap:5px; margin-top:10px; flex-wrap:wrap; }
 .phase-step-tag {
@@ -160,7 +160,7 @@ body {
 .phase-card.active .phase-arrow { color:var(--brand); }
 
 /* ── STEP NAV ── */
-.step-nav { padding:16px 40px 0; display:flex; gap:0; align-items:center; }
+.step-nav { padding:8px 32px 0; display:flex; gap:0; align-items:center; }
 .step-item {
   display:flex; align-items:center; gap:8px; padding:10px 14px; border-radius:var(--radius-sm);
   cursor:pointer; transition:all .2s; flex:1; border:1px solid transparent;
@@ -507,6 +507,175 @@ body {
 /* ── MISC ── */
 .hidden { display:none !important; }
 .section-gap { margin-top:20px; }
+
+/* ── Competency Tooltip ── */
+.comp-tooltip-wrap { position:relative; display:inline-flex; align-items:center; gap:4px; cursor:default; }
+.comp-tooltip-icon {
+  width:14px; height:14px; border-radius:50%;
+  background:var(--brand-lt); color:var(--brand);
+  font-size:9px; font-weight:800;
+  display:inline-flex; align-items:center; justify-content:center;
+  cursor:help; flex-shrink:0;
+  border:1px solid var(--brand-lt);
+}
+.comp-tooltip-box {
+  display:none;
+  position:absolute; left:0; top:calc(100% + 6px);
+  width:280px; background:#1C1917; color:#fff;
+  font-size:11px; line-height:1.5; font-weight:400;
+  padding:10px 12px; border-radius:8px; z-index:999;
+  box-shadow:0 4px 16px rgba(0,0,0,0.2);
+  pointer-events:none;
+}
+.comp-tooltip-box::before {
+  content:''; position:absolute; top:-5px; left:12px;
+  border:5px solid transparent; border-bottom-color:#1C1917;
+  border-top:none;
+}
+.comp-tooltip-wrap:hover .comp-tooltip-box { display:block; }
+
+/* ── Screening Form Panel ── */
+.screening-panel {
+  position:fixed; right:0; top:56px; bottom:0; width:680px;
+  background:white; box-shadow:-4px 0 24px rgba(0,0,0,0.12);
+  z-index:90; display:flex; flex-direction:column;
+  font-family:'MoMo Trust Sans','Inter','Nunito',sans-serif;
+}
+.screening-panel-header {
+  padding:16px 20px; border-bottom:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+  background:#FEEDF3; flex-shrink:0;
+}
+.screening-panel-body {
+  display:flex; flex:1; overflow:hidden;
+}
+.screening-cv-col {
+  width:220px; border-right:1px solid var(--border);
+  overflow-y:auto; padding:16px; flex-shrink:0;
+  font-size:11px;
+}
+.screening-form-col {
+  flex:1; overflow-y:auto; padding:16px;
+}
+.s-section-title {
+  font-size:10px; font-weight:800; text-transform:uppercase;
+  letter-spacing:0.5px; color:var(--brand); margin-bottom:8px;
+  padding-bottom:4px; border-bottom:1.5px solid var(--brand-lt);
+}
+.s-row { display:flex; flex-direction:column; gap:3px; margin-bottom:10px; }
+.s-label { font-size:10px; font-weight:700; color:var(--text-sub); text-transform:uppercase; letter-spacing:0.3px; }
+.s-rating-row { display:flex; gap:6px; }
+.s-rating-btn {
+  padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700;
+  cursor:pointer; border:1.5px solid var(--border); background:white;
+  color:var(--text-muted); transition:all .12s;
+}
+.s-rating-btn.active-1 { background:#FEE2E2; border-color:#F87171; color:#DC2626; }
+.s-rating-btn.active-2 { background:#FEF9C3; border-color:#FCD34D; color:#B45309; }
+.s-rating-btn.active-3 { background:#DCFCE7; border-color:#4ADE80; color:#16A34A; }
+.s-result-btn {
+  padding:5px 10px; border-radius:8px; font-size:11px; font-weight:600;
+  cursor:pointer; border:1.5px solid var(--border); background:white;
+  color:var(--text-main); transition:all .12s; text-align:left; width:100%;
+}
+.s-result-btn.s-active { border-color:var(--brand); background:var(--brand-xl); color:var(--brand); }
+
+/* ── Option C: Wizard Breadcrumb Bar ── */
+.wizard-bar {
+  position:sticky; top:56px; z-index:95;
+  background:white;
+  border-bottom:2px solid var(--border);
+  padding:0 32px;
+  display:flex;
+  align-items:stretch;
+  height:56px;
+  gap:0;
+}
+.wizard-phase-group {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:3px;
+  position:relative;
+  padding:6px 20px 6px 16px;
+  cursor:default;
+  border-right:1px solid var(--border);
+  min-width:0;
+}
+.wizard-phase-group:last-child { border-right:none; }
+.wizard-phase-group.wz-done { background:#FAFAFA; }
+.wizard-phase-group.wz-active { background:var(--brand-xl); border-bottom:2px solid var(--brand); margin-bottom:-2px; }
+
+.wizard-phase-label {
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:0.7px;
+  white-space:nowrap;
+  flex-shrink:0;
+  line-height:1;
+}
+.wizard-phase-group.wz-done .wizard-phase-label { color:#C4C4C4; }
+.wizard-phase-group.wz-active .wizard-phase-label { color:var(--brand); }
+.wizard-phase-group.wz-future .wizard-phase-label { color:#C4C4C4; }
+
+.wizard-steps {
+  display:flex;
+  align-items:center;
+  gap:3px;
+  overflow:hidden;
+}
+.wizard-step-chip {
+  font-size:11px;
+  font-weight:500;
+  padding:1px 0;
+  white-space:nowrap;
+  cursor:pointer;
+  transition:all .12s;
+  color:#9CA3AF;
+  line-height:1.3;
+}
+.wizard-step-chip:hover { color:var(--brand); }
+
+/* Done phase steps */
+.wizard-phase-group.wz-done .wizard-step-chip { color:#C4C4C4; }
+.wizard-phase-group.wz-done .wizard-step-chip.wz-step-done {
+  color:#9CA3AF;
+}
+.wizard-phase-group.wz-done .wizard-step-chip.wz-step-done::before { content:'✓ '; font-size:9px; }
+
+/* Active phase steps */
+.wizard-phase-group.wz-active .wizard-step-chip { color:#9CA3AF; }
+.wizard-phase-group.wz-active .wizard-step-chip:hover { color:var(--brand); }
+.wizard-phase-group.wz-active .wizard-step-chip.wz-step-active {
+  color:#1C1917;
+  font-weight:700;
+  position:relative;
+}
+.wizard-phase-group.wz-active .wizard-step-chip.wz-step-active::after {
+  content:'';
+  position:absolute;
+  bottom:-7px;
+  left:0; right:0;
+  height:2px;
+  background:var(--brand);
+  border-radius:2px;
+}
+.wizard-phase-group.wz-active .wizard-step-chip.wz-step-done { color:var(--brand); }
+.wizard-phase-group.wz-active .wizard-step-chip.wz-step-done::before { content:'✓ '; font-size:9px; }
+
+/* Future phase */
+.wizard-phase-group.wz-future .wizard-step-chip { color:#D1D5DB; }
+
+.wizard-step-sep {
+  color:#E5E7EB;
+  font-size:11px;
+  flex-shrink:0;
+  margin:0 1px;
+}
+
+.phase-desc { display:none; }
+.phase-steps { display:none; }
 </style>
 </head>
 <body>
@@ -565,12 +734,6 @@ body {
       <span class="phase-num">Phase 1</span>
     </div>
     <div class="phase-name">Before Hiring</div>
-    <div class="phase-desc">Job request, alignment, sourcing & candidate shortlisting</div>
-    <div class="phase-steps">
-      <span class="phase-step-tag">Step 1: Job Request</span>
-      <span class="phase-step-tag">Step 2: Hiring Alignment</span>
-      <span class="phase-step-tag">Step 3: Candidate Pipeline</span>
-    </div>
     <div class="phase-arrow">›</div>
   </div>
   <div class="phase-card" onclick="selectPhase(1,this)" id="phase-1">
@@ -579,12 +742,6 @@ body {
       <span class="phase-num">Phase 2</span>
     </div>
     <div class="phase-name">During Hiring</div>
-    <div class="phase-desc">Structured interviews, culture assessment & reference check</div>
-    <div class="phase-steps">
-      <span class="phase-step-tag">Step 4: Technical</span>
-      <span class="phase-step-tag">Step 5: Culture</span>
-      <span class="phase-step-tag">Step 6: Reference Check</span>
-    </div>
     <div class="phase-arrow">›</div>
   </div>
   <div class="phase-card" onclick="selectPhase(2,this)" id="phase-2">
@@ -593,11 +750,6 @@ body {
       <span class="phase-num">Phase 3</span>
     </div>
     <div class="phase-name">After Hiring</div>
-    <div class="phase-desc">Offer proposal, onboarding & probation evaluation with risk tracking</div>
-    <div class="phase-steps">
-      <span class="phase-step-tag">Step 7: Offer</span>
-      <span class="phase-step-tag">Step 8: Probation</span>
-    </div>
     <div class="phase-arrow">›</div>
   </div>
 </div>
@@ -612,8 +764,8 @@ body {
 <div class="footer-actions">
   <div class="footer-left" id="footer-info">Step 1 / 7 — Job Request</div>
   <div class="footer-right">
-    <button class="btn-ghost" onclick="prevStep()">← Back</button>
-    <button class="btn-primary" onclick="nextStep()">Save & Continue →</button>
+    <button class="btn-ghost" id="btn-back" onclick="prevStep()">← Back</button>
+    <button class="btn-primary" id="btn-next" onclick="nextStep()">Next Step →</button>
   </div>
 </div>
 
@@ -727,12 +879,77 @@ function selectPhase(p, el) {
   currentStep = phases[p].steps[0];
   render();
 }
+
+
+// ── Wizard Breadcrumb Update ──
+const wizardStepPhase = [0,0,0, 1,1,1, 2,2]; // which phase each step belongs to
+const wizardStepNames = [
+  'Job Request','Hiring Alignment','Candidate Pipeline',
+  'Technical','Culture','Ref Check','Offer','Probation'
+];
+
+function goToStep(stepIdx) {
+  currentStep = stepIdx;
+  currentPhase = wizardStepPhase[stepIdx];
+  render();
+  setTimeout(updateNavButtons, 20);
+  setTimeout(updateWizardBar, 20);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateWizardBar() {
+  const phase = wizardStepPhase[currentStep];
+  for (let p = 0; p < 3; p++) {
+    const pg = document.getElementById('wz-phase-' + p);
+    if (!pg) continue;
+    pg.className = 'wizard-phase-group ' + (p < phase ? 'wz-done' : p === phase ? 'wz-active' : 'wz-future');
+  }
+  // Update step chips
+  const phaseSteps = [[0,1,2],[3,4,5],[6,7]];
+  for (let p = 0; p < 3; p++) {
+    const steps = phaseSteps[p];
+    steps.forEach(function(si) {
+      const chips = document.querySelectorAll('#wz-steps-' + p + ' .wizard-step-chip');
+      const localIdx = steps.indexOf(si);
+      if (chips[localIdx]) {
+        chips[localIdx].className = 'wizard-step-chip' +
+          (si < currentStep ? ' wz-step-done' :
+           si === currentStep ? ' wz-step-active' : '');
+      }
+    });
+  }
+}
+// ── Nav button labels ──
+const stepLabels = [
+  'Job Request','Hiring Alignment','Candidate Pipeline',
+  'Technical Interview','Culture Interview','Reference Check',
+  'Offer Proposal','Probation'
+];
+function updateNavButtons() {
+  const backBtn = document.getElementById('btn-back');
+  const nextBtn = document.getElementById('btn-next');
+  if (!backBtn || !nextBtn) return;
+  if (currentStep === 0) {
+    backBtn.style.visibility = 'hidden';
+  } else {
+    backBtn.style.visibility = 'visible';
+    backBtn.textContent = '← ' + stepLabels[currentStep - 1];
+  }
+  if (currentStep === 7) {
+    nextBtn.textContent = 'Finish ✓';
+  } else {
+    nextBtn.textContent = 'Next: ' + stepLabels[currentStep + 1] + ' →';
+  }
+}
+
 function nextStep() {
   if(currentStep < 7) {
     currentStep++;
     currentPhase = steps[currentStep].phase;
     document.querySelectorAll('.phase-card').forEach((c,i)=>c.classList.toggle('active',i===currentPhase));
     render();
+    setTimeout(updateNavButtons, 20);
+    setTimeout(updateWizardBar, 20);
     window.scrollTo({top:0,behavior:'smooth'});
   }
 }
@@ -742,6 +959,8 @@ function prevStep() {
     currentPhase = steps[currentStep].phase;
     document.querySelectorAll('.phase-card').forEach((c,i)=>c.classList.toggle('active',i===currentPhase));
     render();
+    setTimeout(updateNavButtons, 10);
+    setTimeout(updateWizardBar, 20);
     window.scrollTo({top:0,behavior:'smooth'});
   }
 }
@@ -1366,10 +1585,31 @@ function pageIntake_Locked() { return `
   </div>
 </div>
 
+
+<!-- Role Success Definition - Read Only -->
+<div class="form-section">
+  <div class="form-section-header">
+    <div class="form-section-icon" style="background:#F0FDF4;">🎯</div>
+    <div><div class="form-section-title">Section 3 — Role Success Definition</div><div class="form-section-note">Desired outcomes in first 6 months — defined in Hiring Alignment</div></div>
+  </div>
+  <div class="form-body">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <span style="font-size:11px;font-weight:700;color:var(--brand);min-width:68px;padding-top:1px;">Outcome 1</span>
+        <span style="font-size:12px;color:var(--text-main);line-height:1.5;">Fully onboarded and independently leading the Growth squad — shipping weekly experiments</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <span style="font-size:11px;font-weight:700;color:var(--brand);min-width:68px;padding-top:1px;">Outcome 2</span>
+        <span style="font-size:12px;color:var(--text-main);line-height:1.5;">Established stakeholder relationships across Risk, Data, and Marketing</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="form-section">
   <div class="form-section-header">
     <div class="form-section-icon" style="background:#EDE9FE">👥</div>
-    <div><div class="form-section-title">Section 3 — Candidate Persona</div></div>
+    <div><div class="form-section-title">Section 4 — Candidate Persona</div></div>
   </div>
   <div class="form-body">
     <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;">Target Profile</div>
@@ -1390,10 +1630,31 @@ function pageIntake_Locked() { return `
   </div>
 </div>
 
+
+<!-- Value Proposition - Read Only -->
+<div class="form-section">
+  <div class="form-section-header">
+    <div class="form-section-icon" style="background:#FFF7ED;">💎</div>
+    <div><div class="form-section-title">Section 5 — Role Value Proposition</div><div class="form-section-note">Why strong candidates should join this role</div></div>
+  </div>
+  <div class="form-body">
+    <div style="font-size:11px;font-weight:700;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:6px;">Selling Points</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+      <span style="background:var(--brand-xl);color:var(--brand);border:1px solid var(--brand-lt);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;">Business impact</span>
+      <span style="background:var(--brand-xl);color:var(--brand);border:1px solid var(--brand-lt);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;">Leadership exposure</span>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:6px;">Development Roadmap</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+      <span style="background:var(--slate-lt);color:var(--text-main);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;">Expand scope</span>
+      <span style="background:var(--slate-lt);color:var(--text-main);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;">Lead larger team</span>
+    </div>
+  </div>
+</div>
+
 <div class="form-section">
   <div class="form-section-header">
     <div class="form-section-icon" style="background:var(--green-lt)">📅</div>
-    <div><div class="form-section-title">Section 4 — Interview Plan</div></div>
+    <div><div class="form-section-title">Section 6 — Interview Plan</div></div>
   </div>
   <div class="form-body">
     <table class="comp-table">
@@ -1821,10 +2082,36 @@ function pageIntake_HRTA() { return `
   </div>
 </div>
 
+
+<!-- SECTION 3 — ROLE SUCCESS DEFINITION -->
+<div class="form-section">
+  <div class="form-section-header">
+    <div class="form-section-icon" style="background:#F0FDF4;">🎯</div>
+    <div><div class="form-section-title">Section 3 — Role Success Definition</div><div class="form-section-note">Define what "great" looks like within the first 6 months</div></div>
+  </div>
+  <div class="form-body">
+    <div class="form-group">
+      <label class="form-label">What are the desired outcomes within 6 months?</label>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;font-weight:700;color:var(--brand);min-width:68px;">Outcome 1</span>
+          <input class="form-input" style="flex:1;" placeholder="e.g. Fully onboarded and independently leading the Growth squad — shipping weekly experiments" onchange="saveJobField('outcome1',this.value)"/>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;font-weight:700;color:var(--brand);min-width:68px;">Outcome 2</span>
+          <input class="form-input" style="flex:1;" placeholder="e.g. Established stakeholder relationships across Risk, Data, and Marketing" onchange="saveJobField('outcome2',this.value)"/>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
 <div class="form-section">
   <div class="form-section-header">
     <div class="form-section-icon" style="background:#EDE9FE">👤</div>
-    <div><div class="form-section-title">Section 3 — Candidate Persona</div><div class="form-section-note">Define the ideal candidate profile to guide sourcing &amp; screening</div></div>
+    <div><div class="form-section-title">Section 4 — Candidate Persona</div><div class="form-section-note">Define the ideal candidate profile to guide sourcing &amp; screening</div></div>
   </div>
   <div class="form-body">
     <div style="font-size:10px;font-weight:800;color:var(--text-sub);text-transform:uppercase;margin-bottom:10px;">Candidate Portrait</div>
@@ -1876,44 +2163,64 @@ function pageIntake_HRTA() { return `
   </div>
 </div>
 
+
+<!-- SECTION 5 — ROLE VALUE PROPOSITION -->
+<div class="form-section">
+  <div class="form-section-header">
+    <div class="form-section-icon" style="background:#FFF7ED;">💎</div>
+    <div><div class="form-section-title">Section 5 — Role Value Proposition</div><div class="form-section-note">What makes this role attractive for strong candidates?</div></div>
+  </div>
+  <div class="form-body">
+    <div class="form-group">
+      <label class="form-label">Role selling points <span style="font-weight:400;color:var(--text-muted);">(select all that apply)</span></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-top:6px;">
+        <label style="display:flex;align-items:flex-start;gap:7px;font-size:12px;cursor:pointer;padding:6px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);">
+          <input type="checkbox" style="margin-top:2px;accent-color:var(--brand);flex-shrink:0;"/>
+          <span><strong>Business impact</strong><br><span style="font-size:11px;color:var(--text-muted);">Build/own strategic product or direct biz metric impact</span></span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:7px;font-size:12px;cursor:pointer;padding:6px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);">
+          <input type="checkbox" style="margin-top:2px;accent-color:var(--brand);flex-shrink:0;"/>
+          <span><strong>Leadership exposure</strong><br><span style="font-size:11px;color:var(--text-muted);">Direct exposure to senior leadership</span></span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:7px;font-size:12px;cursor:pointer;padding:6px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);">
+          <input type="checkbox" style="margin-top:2px;accent-color:var(--brand);flex-shrink:0;"/>
+          <span><strong>Learning opportunities</strong><br><span style="font-size:11px;color:var(--text-muted);">On-the-job learning from peers / stakeholders / LM</span></span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:7px;font-size:12px;cursor:pointer;padding:6px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);">
+          <input type="checkbox" style="margin-top:2px;accent-color:var(--brand);flex-shrink:0;"/>
+          <span><strong>Other</strong><br><span style="font-size:11px;color:var(--text-muted);">Please specify in Remarks below</span></span>
+        </label>
+      </div>
+      <input class="form-input" style="margin-top:8px;font-size:11px;" placeholder="Remarks — selling point details (optional)"/>
+    </div>
+
+    <div class="form-group" style="margin-top:12px;">
+      <label class="form-label">Potential development roadmap <span style="font-weight:400;color:var(--text-muted);">(directional)</span></label>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);"><input type="checkbox" style="accent-color:var(--brand);flex-shrink:0;"/> Expand scope</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);"><input type="checkbox" style="accent-color:var(--brand);flex-shrink:0;"/> Lead larger team</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);"><input type="checkbox" style="accent-color:var(--brand);flex-shrink:0;"/> Higher job grade</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);"><input type="checkbox" style="accent-color:var(--brand);flex-shrink:0;"/> Job rotation</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);"><input type="checkbox" style="accent-color:var(--brand);flex-shrink:0;"/> Other (see Remarks)</label>
+      </div>
+      <input class="form-input" style="margin-top:8px;font-size:11px;" placeholder="Remarks — development path details (optional)"/>
+    </div>
+  </div>
+</div>
+
+
 <div class="form-section">
   <div class="form-section-header">
     <div class="form-section-icon" style="background:var(--green-lt)">📅</div>
-    <div><div class="form-section-title">Section 4 — Interview Plan</div><div class="form-section-note">${gradeToIntakeNote(jobData.grade)}</div></div>
+    <div><div class="form-section-title">Section 6 — Interview Plan</div><div class="form-section-note">${gradeToIntakeNote(jobData.grade)}</div></div>
   </div>
   <div class="form-body">
-    <div class="info-pill" style="margin-bottom:14px;">🔁 ${jobData.gradeLabel} · ${jobData.roleType === "People Manager" ? "Non-Tech: LM → LM2 → Peer / HRBPM → Division Head" : "Tech: LM + Technical Interviewer → LM2 → HRBPM"}</div>
-    <div style="font-size:10px;font-weight:800;color:var(--text-sub);text-transform:uppercase;margin-bottom:10px;">Pre-Interview Requirements</div>
-    <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
-      <div style="flex:1;min-width:200px;background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:10px;padding:12px 14px;">
-        <div style="font-weight:800;font-size:12px;color:var(--blue);margin-bottom:6px;">🧠 Cognitive Test</div>
-        <div style="font-size:11px;color:var(--text-sub);margin-bottom:8px;">Required <strong>before Round 1</strong></div>
-        <select class="form-input form-select" style="font-size:11px;padding:5px 10px;margin-bottom:8px;"><option selected>Required — before Round 1</option><option>Not required</option></select>
-        <div style="background:white;border-radius:6px;padding:8px 10px;border:1px solid var(--blue-mid);">
-          <div style="font-size:10px;font-weight:800;color:var(--text-muted);margin-bottom:4px;">Passing threshold</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:11px;color:var(--text-sub);">Standard: <strong style="color:var(--blue);">P60</strong></span>
-            <span style="font-size:11px;color:var(--text-muted);">· Override:</span>
-            <input class="form-input" placeholder="P__" style="width:55px;font-size:12px;font-weight:700;text-align:center;padding:3px 6px;"/>
-          </div>
-          <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">Leave blank = P60 default</div>
-        </div>
-        <div style="margin-top:8px;font-size:10px;color:var(--text-muted);">Results shared with all interviewers before sessions begin</div>
-      </div>
-      <div style="flex:1;min-width:200px;background:#EDE9FE;border:1px solid #C4B5FD;border-radius:10px;padding:12px 14px;">
-        <div style="font-weight:800;font-size:12px;color:#5B21B6;margin-bottom:6px;">📝 Business Case / Assignment</div>
-        <div style="font-size:11px;color:var(--text-sub);margin-bottom:8px;">Assigned after Round 1, due before Round 2</div>
-        <select class="form-input form-select" style="font-size:11px;padding:5px 10px;margin-bottom:8px;"><option selected>Required — between Round 1–2</option><option>Not required</option><option>Required — before Round 1</option></select>
-        <input class="form-input" style="font-size:11px;padding:5px 10px;" placeholder="Describe the brief or paste a link..." value="Growth strategy deck: propose 3 initiatives to +10% MAU in 90 days"/>
-      </div>
-    </div>
-    <div style="font-size:10px;font-weight:800;color:var(--text-sub);text-transform:uppercase;margin-bottom:10px;">Interview Rounds</div>
     <table class="comp-table">
-      <tr><th style="width:90px;">Round</th><th>Interviewer</th><th style="width:260px;">Interview Objective</th></tr>
-      <tr><td><span class="badge badge-new">Round 1</span></td><td><input class="form-input" value="Line Manager (Hiring Mgr)"/></td><td><select class="form-input form-select"><option selected>Technical depth — domain &amp; execution</option><option>Culture &amp; Behavior fit</option><option>Strategic thinking &amp; leadership</option><option>General / Exploratory</option></select></td></tr>
-      <tr><td><span class="badge badge-new">Round 2</span></td><td><input class="form-input" value="Line Manager 2 (Dept Head)"/></td><td><select class="form-input form-select"><option selected>Technical depth — domain &amp; execution</option><option>Culture &amp; Behavior fit</option><option>Strategic thinking &amp; leadership</option><option>General / Exploratory</option></select></td></tr>
-      <tr><td><span class="badge badge-brand">Round 3</span></td><td><input class="form-input" value="Peer / HRBPM"/></td><td><select class="form-input form-select"><option>Technical depth — domain &amp; execution</option><option selected>Culture &amp; Behavior fit</option><option>Strategic thinking &amp; leadership</option><option>General / Exploratory</option></select></td></tr>
-      <tr><td><span class="badge badge-brand">Round 4</span></td><td><input class="form-input" value="Division Head (CTO / BU Head)"/></td><td><select class="form-input form-select"><option>Technical depth — domain &amp; execution</option><option>Culture &amp; Behavior fit</option><option selected>Strategic thinking &amp; leadership</option><option>General / Exploratory</option></select></td></tr>
+      <tr><th>Round</th><th>Interviewer</th><th>Objective</th></tr>
+      <tr><td><span class="badge badge-new">Round 1</span></td><td>Line Manager</td><td>Technical depth — domain & execution</td></tr>
+      <tr><td><span class="badge badge-new">Round 2</span></td><td>Line Manager 2</td><td>Technical depth — domain & execution</td></tr>
+      <tr><td><span class="badge badge-brand">Round 3</span></td><td>Peer / HRBPM</td><td>Culture & Behavior fit</td></tr>
+      <tr><td><span class="badge badge-brand">Round 4</span></td><td>Division Head</td><td>Strategic thinking & leadership</td></tr>
     </table>
   </div>
 </div>
@@ -1969,12 +2276,27 @@ function pagePipeline_HRTA() { return `
   </div>
   <div class="form-body">
     <table class="comp-table">
-      <tr><th style="width:16%">Candidate</th><th style="width:10%">Source</th><th style="width:20%">Background</th><th style="width:10%">TA Rating</th><th>TA Assessment Note</th><th style="width:110px;">Status</th></tr>
-      <tr><td><div class="comp-name">Chung Tiến Minh Trí</div></td><td><span class="badge badge-new">LinkedIn</span></td><td><div class="comp-desc">7 yrs PM · Grab → Shopee</div></td><td><span style="font-weight:800;font-size:11px;color:var(--green);">Strong</span></td><td><div class="comp-desc">Excellent growth portfolio. Strong analytical skills. Meets seniority threshold.</div></td><td><span style="background:var(--green-lt);color:var(--green);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;">✓ Confirmed</span></td></tr>
-      <tr><td><div class="comp-name">Đinh Thị Huyền Thương</div></td><td><span class="badge badge-done">Referral</span></td><td><div class="comp-desc">5 yrs PM · VNPay</div></td><td><span style="font-weight:800;font-size:11px;color:var(--blue);">Potential</span></td><td><div class="comp-desc">Good product sense, limited leadership experience. Worth HM screening.</div></td><td><span style="background:var(--green-lt);color:var(--green);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;">✓ Confirmed</span></td></tr>
-      <tr><td><div class="comp-name">Trần Ngọc Lân</div></td><td><span class="badge badge-new">LinkedIn</span></td><td><div class="comp-desc">8 yrs PM · Sea Group</div></td><td><span style="font-weight:800;font-size:11px;color:var(--green);">Strong</span></td><td><div class="comp-desc">Strong strategic background but compensation expectation may be high.</div></td><td><span style="background:var(--amber-lt);color:var(--amber);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;">⏳ Pending HM</span></td></tr>
-      <tr><td><div class="comp-name">Huỳnh Thị Minh Trang</div></td><td><span class="badge badge-purple">Agency</span></td><td><div class="comp-desc">6 yrs PM · MoMo (prev)</div></td><td><span style="font-weight:800;font-size:11px;color:var(--amber);">Moderate</span></td><td><div class="comp-desc">Solid background but slightly below target seniority.</div></td><td><span style="background:var(--amber-lt);color:var(--amber);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;">⏳ Pending HM</span></td></tr>
-      <tr><td><div class="comp-name">Tạ Quốc Anh</div></td><td><span class="badge badge-new">Job Board</span></td><td><div class="comp-desc">4 yrs PM · Startup</div></td><td><span style="font-weight:800;font-size:11px;color:var(--amber);">Moderate</span></td><td><div class="comp-desc">Interesting growth hacking background. Needs validation on scale experience.</div></td><td><span style="background:var(--slate-lt);color:var(--text-muted);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;">✗ Not suitable</span></td></tr>
+      <tr><th style="width:16%">Candidate</th><th style="width:10%">Source</th><th style="width:18%">Background</th><th style="width:10%">TA Rating</th><th>TA Assessment Note</th><th style="width:90px;">Status</th><th style="width:100px;">Screening</th></tr>
+      <tr><td><div class="comp-name">Chung Tiến Minh Trí</div></td><td><span class="badge badge-new">LinkedIn</span></td><td><div class="comp-desc">7 yrs PM · Grab → Shopee</div></td><td><span id="ta-rating-0" style="font-weight:800;font-size:11px;color:var(--green);">Strong</span></td><td><div class="comp-desc">Excellent growth portfolio. Strong analytical skills. Meets seniority threshold.</div></td><td><span style="background:var(--green-lt);color:var(--green);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;">✓ Confirmed</span></td><td style="text-align:center;">
+        <button onclick="openScreening(0)" style="background:var(--brand-xl);color:var(--brand);border:1.5px solid var(--brand-lt);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">+ Screen</button>
+        <span id="screening-badge-0" style="display:none;margin-top:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid;white-space:nowrap;"></span>
+      </td></tr>
+      <tr><td><div class="comp-name">Đinh Thị Huyền Thương</div></td><td><span class="badge badge-done">Referral</span></td><td><div class="comp-desc">5 yrs PM · VNPay</div></td><td><span id="ta-rating-1" style="font-weight:800;font-size:11px;color:var(--blue);">Potential</span></td><td><div class="comp-desc">Good product sense, limited leadership experience. Worth HM screening.</div></td><td><span style="background:var(--green-lt);color:var(--green);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;">✓ Confirmed</span></td><td style="text-align:center;">
+        <button onclick="openScreening(1)" style="background:var(--brand-xl);color:var(--brand);border:1.5px solid var(--brand-lt);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">+ Screen</button>
+        <span id="screening-badge-1" style="display:none;margin-top:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid;white-space:nowrap;"></span>
+      </td></tr>
+      <tr><td><div class="comp-name">Trần Ngọc Lân</div></td><td><span class="badge badge-new">LinkedIn</span></td><td><div class="comp-desc">8 yrs PM · Sea Group</div></td><td><span id="ta-rating-2" style="font-weight:800;font-size:11px;color:var(--green);">Strong</span></td><td><div class="comp-desc">Strong strategic background but compensation expectation may be high.</div></td><td><span style="background:var(--amber-lt);color:var(--amber);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;">⏳ Pending HM</span></td><td style="text-align:center;">
+        <button onclick="openScreening(2)" style="background:var(--brand-xl);color:var(--brand);border:1.5px solid var(--brand-lt);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">+ Screen</button>
+        <span id="screening-badge-2" style="display:none;margin-top:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid;white-space:nowrap;"></span>
+      </td></tr>
+      <tr><td><div class="comp-name">Huỳnh Thị Minh Trang</div></td><td><span class="badge badge-purple">Agency</span></td><td><div class="comp-desc">6 yrs PM · MoMo (prev)</div></td><td><span id="ta-rating-3" style="font-weight:800;font-size:11px;color:var(--amber);">Moderate</span></td><td><div class="comp-desc">Solid background but slightly below target seniority.</div></td><td><span style="background:var(--amber-lt);color:var(--amber);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;">⏳ Pending HM</span></td><td style="text-align:center;">
+        <button onclick="openScreening(3)" style="background:var(--brand-xl);color:var(--brand);border:1.5px solid var(--brand-lt);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">+ Screen</button>
+        <span id="screening-badge-3" style="display:none;margin-top:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid;white-space:nowrap;"></span>
+      </td></tr>
+      <tr><td><div class="comp-name">Tạ Quốc Anh</div></td><td><span class="badge badge-new">Job Board</span></td><td><div class="comp-desc">4 yrs PM · Startup</div></td><td><span style="font-weight:800;font-size:11px;color:var(--amber);">Moderate</span></td><td><div class="comp-desc">Interesting growth hacking background. Needs validation on scale experience.</div></td><td><span style="background:var(--slate-lt);color:var(--text-muted);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;">✗ Not suitable</span></td><td style="text-align:center;">
+        <button onclick="openScreening(4)" style="background:var(--brand-xl);color:var(--brand);border:1.5px solid var(--brand-lt);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">+ Screen</button>
+        <span id="screening-badge-4" style="display:none;margin-top:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid;white-space:nowrap;"></span>
+      </td></tr>
     </table>
     <div style="margin-top:10px;"><button class="btn-ghost" style="font-size:11px;" onclick="alert('Add candidate')">+ Add candidate</button></div>
   </div>
@@ -1992,12 +2314,15 @@ function pagePipeline_HRTA() { return `
         <td><div class="comp-name">Lê Thế Huy</div></td>
         <td><span class="badge badge-done" style="font-size:10px;">Referral</span></td>
         <td><div class="comp-desc">5 yrs PM · Tiki</div></td>
-        <td><span style="font-weight:800;font-size:11px;color:var(--amber);">Assessing</span></td>
-        <td><div class="comp-desc">Good background. Need to verify scope of ownership before shortlisting.</div></td>
+        <td><span style="font-weight:800;font-size:11px;color:#9CA3AF;">— Not yet screened</span></td>
+        <td><span style="font-size:11px;color:#9CA3AF;font-style:italic;">Pending TA screening</span></td>
         <td>
-          <div style="display:flex;gap:5px;">
-            <button onclick="alert('Moved to shortlist')" style="background:var(--green-lt);color:var(--green);border:1px solid var(--green-mid);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;">→ Shortlist</button>
-            <button onclick="alert('Candidate archived')" style="background:var(--slate-lt);color:var(--text-muted);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;">Archive</button>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <button onclick="openScreening(5)" style="background:var(--brand-xl);color:var(--brand);border:1.5px solid var(--brand-lt);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">+ Screen</button>
+            <div style="display:flex;gap:5px;">
+              <button onclick="alert('Moved to shortlist')" style="background:var(--green-lt);color:var(--green);border:1px solid var(--green-mid);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;">→ Shortlist</button>
+              <button onclick="alert('Candidate archived')" style="background:var(--slate-lt);color:var(--text-muted);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;">Archive</button>
+            </div>
           </div>
         </td>
       </tr>
@@ -2005,12 +2330,15 @@ function pagePipeline_HRTA() { return `
         <td><div class="comp-name">Đỗ Đức Thịnh</div></td>
         <td><span class="badge badge-new" style="font-size:10px;">LinkedIn</span></td>
         <td><div class="comp-desc">6 yrs PM · VinID</div></td>
-        <td><span style="font-weight:800;font-size:11px;color:var(--blue);">Potential</span></td>
-        <td><div class="comp-desc">Interesting profile. Waiting for portfolio samples. Interview scheduled for 22/03.</div></td>
+        <td><span style="font-weight:800;font-size:11px;color:#9CA3AF;">— Not yet screened</span></td>
+        <td><span style="font-size:11px;color:#9CA3AF;font-style:italic;">Pending TA screening</span></td>
         <td>
-          <div style="display:flex;gap:5px;">
-            <button onclick="alert('Moved to shortlist')" style="background:var(--green-lt);color:var(--green);border:1px solid var(--green-mid);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;">→ Shortlist</button>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <button onclick="openScreening(6)" style="background:var(--brand-xl);color:var(--brand);border:1.5px solid var(--brand-lt);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">+ Screen</button>
+            <div style="display:flex;gap:5px;">
+              <button onclick="alert('Moved to shortlist')" style="background:var(--green-lt);color:var(--green);border:1px solid var(--green-mid);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;">→ Shortlist</button>
             <button onclick="alert('Candidate archived')" style="background:var(--slate-lt);color:var(--text-muted);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;">Archive</button>
+            </div>
           </div>
         </td>
       </tr>
@@ -2058,16 +2386,18 @@ function pagePipeline_HM() { return `
             <div style="font-weight:800;font-size:13px;">${c.name}</div>
             <span class="badge badge-new" style="font-size:9px;">${c.src}</span>
             <span style="font-weight:800;font-size:11px;color:${c.ratCol};">TA: ${c.rat}</span>
-            ${c.cv ? '<button onclick="showCV('+ci+')" style="margin-left:4px;background:var(--blue-lt);color:var(--blue);border:none;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;">📄 View Profile</button>' : ''}
+            ${c.cv ? '<button onclick="showCV(${ci})" style="margin-left:4px;background:var(--blue-lt);color:var(--blue);border:none;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;">📄 View Profile</button>' : ''}
           </div>
           <div style="font-size:11px;color:var(--text-sub);margin-bottom:6px;">${c.bg}</div>
           <div style="font-size:11px;color:var(--text-main);background:rgba(0,0,0,0.03);border-radius:6px;padding:6px 10px;line-height:1.5;"><strong>TA note:</strong> ${c.note}</div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;min-width:136px;">
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;min-width:148px;">
           <button onclick="setCandidateDecision(this,'confirm')" style="background:${c.dec==='confirm'?'var(--green)':'white'};color:${c.dec==='confirm'?'white':'var(--green)'};border:1.5px solid var(--green);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">✓ Invite to Interview</button>
           <button onclick="alert('Info request sent to TA')" style="background:white;color:var(--blue);border:1.5px solid var(--blue);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">? Need more info</button>
           <button onclick="setCandidateDecision(this,'decline')" style="background:white;color:var(--text-muted);border:1.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">✗ Not suitable</button>
+          <button onclick="openScreening(${ci})" style="background:none;color:var(--brand);border:none;padding:3px 0;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;text-align:left;display:flex;align-items:center;gap:4px;opacity:0.8;">📋 View TA Screening</button>
         </div>
+        
       </div>
       <div style="margin-top:8px;"><input class="form-input" placeholder="Optional comment to TA (1 line max)..." style="font-size:11px;padding:6px 10px;"/></div>
     </div>`).join('')}
@@ -2224,56 +2554,83 @@ ${currentRole === "hm" ? `
     </div>
     <table class="comp-table">
       <tr>
-        <th style="width:20%">Competency</th>
-        <th style="width:32%">Description</th>
-        <th style="width:80px">LM Rating</th>
+        <th style="width:26%">Competency <span style="font-size:9px;font-weight:400;opacity:0.7;">(hover for description)</span></th>
+        <th style="width:110px">LM Rating</th>
         <th>LM Evidence</th>
-        <th style="width:80px">ULM Rating</th>
+        <th style="width:110px">ULM Rating</th>
         <th>ULM Evidence</th>
       </tr>
       <tr>
-        <td><div class="comp-name">Domain Knowledge</div></td>
-        <td><div class="comp-desc">Depth, accuracy, and clarity of understanding of core subject matter. Candidate can explain concepts clearly, understand trade-offs, and avoid superficial answers.</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Domain Knowledge</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Depth, accuracy, and clarity of understanding of core subject matter. Candidate can explain concepts clearly, understand trade-offs, and avoid superficial answers.</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
-        <td><input class="form-input" placeholder="Situation → Action → Result..."/></td>
-        <td><div class="star-row" data-val="4">★★★★☆</div></td>
-        <td><input class="form-input" placeholder="Evidence..."/></td>
-      </tr>
-      <tr>
-        <td><div class="comp-name">Functional Skills</div></td>
-        <td><div class="comp-desc">Ability to apply required tools, frameworks, and methods effectively in practical situations. Focus on execution ability, not theoretical familiarity.</div></td>
-        <td><div class="star-row" data-val="4">★★★★☆</div></td>
-        <td><input class="form-input" placeholder="Situation → Action → Result..."/></td>
+        <td><input class="form-input" placeholder="Situation → Action → Result..." value="Deep understanding of fintech payment flows and MoMo growth funnel. Accurately described MAU growth levers and explained trade-offs between retention vs acquisition spend."/></td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Relevant Experience</div></td>
-        <td><div class="comp-desc">Similarity of previous scope, ownership level, and complexity to this role. Evaluate whether past exposure matches current business requirements.</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Functional Skills</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Ability to apply required tools, frameworks, and methods effectively in practical situations. Focus on execution ability, not theoretical familiarity.</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
-        <td><input class="form-input" placeholder="Situation → Action → Result..."/></td>
-        <td><div class="star-row" data-val="4">★★★★☆</div></td>
-        <td><input class="form-input" placeholder="Evidence..."/></td>
-      </tr>
-      <tr>
-        <td><div class="comp-name">Problem Solving &amp; Analytical Thinking</div></td>
-        <td><div class="comp-desc">Structured reasoning, ability to break down problems, evaluate options, and make sound decisions. Look for clarity, logic, and trade-off awareness.</div></td>
-        <td><div class="star-row" data-val="4">★★★★☆</div></td>
-        <td><input class="form-input" placeholder="Situation → Action → Result..."/></td>
+        <td><input class="form-input" placeholder="Situation → Action → Result..." value="Strong command of A/B testing frameworks. Walked through a real experiment design with control group logic and statistical significance thresholds. Evidence of hands-on execution."/></td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Execution &amp; Delivery</div></td>
-        <td><div class="comp-desc">Track record of delivering outcomes independently. Evaluate reliability, follow-through, and ability to operate under constraints.</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Relevant Experience</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Similarity of previous scope, ownership level, and complexity to this role. Evaluate whether past exposure matches current business requirements.</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
-        <td><input class="form-input" placeholder="Situation → Action → Result..."/></td>
+        <td><input class="form-input" placeholder="Situation → Action → Result..." value="Led MAU growth squad at Shopee VN (3M+ users). Scope directly comparable. Owned roadmap end-to-end including stakeholder alignment with Risk and Marketing."/></td>
+        <td><div class="star-row" data-val="4">★★★★☆</div></td>
+        <td><input class="form-input" placeholder="Evidence..."/></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Problem Solving &amp; Analytical Thinking</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Structured reasoning, ability to break down problems, evaluate options, and make sound decisions. Look for clarity, logic, and trade-off awareness.</div>
+          </div>
+        </td>
+        <td><div class="star-row" data-val="4">★★★★☆</div></td>
+        <td><input class="form-input" placeholder="Situation → Action → Result..." value="Given a cold-start problem for new segment, candidate structured a 3-phase approach: signal gathering - hypothesis - controlled rollout. Clear, logic-driven framing."/></td>
+        <td><div class="star-row" data-val="4">★★★★☆</div></td>
+        <td><input class="form-input" placeholder="Evidence..."/></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Execution &amp; Delivery</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Track record of delivering outcomes independently. Evaluate reliability, follow-through, and ability to operate under constraints.</div>
+          </div>
+        </td>
+        <td><div class="star-row" data-val="4">★★★★☆</div></td>
+        <td><input class="form-input" placeholder="Situation → Action → Result..." value="Good track record but some gaps in how setbacks were handled. One project descoped mid-flight. Would benefit from validation on resilience under constraint."/></td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
       </tr>
       <tr style="background:var(--slate-lt)">
-        <td><div class="comp-name" style="color:var(--text-sub);font-style:italic;">(For senior/leadership positions)<br/>Strategic / System Thinking</div></td>
-        <td><div class="comp-desc">Ability to understand broader impact, long-term consequences, and cross-functional implications. Required for senior or leadership roles.</div></td>
+        <td><div class="comp-tooltip-wrap" style="align-items:flex-start;">
+            <span class="comp-name" style="color:var(--text-sub);font-style:italic;">(For senior/leadership positions)<br/>Strategic / System Thinking</span>
+            <span class="comp-tooltip-icon" style="margin-top:2px;">i</span>
+            <div class="comp-tooltip-box">Ability to understand broader impact, long-term consequences, and cross-functional implications. Required for senior or leadership roles.</div>
+          </div></td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Situation → Action → Result..."/></td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
@@ -2291,48 +2648,72 @@ ${currentRole === "hm" ? `
   <div class="form-body">
     <table class="comp-table">
       <tr>
-        <th style="width:20%">Dimension</th>
-        <th style="width:32%">Description</th>
-        <th style="width:80px">LM Rating</th>
+        <th style="width:26%">Dimension <span style="font-size:9px;font-weight:400;opacity:0.7;">(hover for description)</span></th>
+        <th style="width:110px">LM Rating</th>
         <th>LM Evidence</th>
-        <th style="width:80px">ULM Rating</th>
+        <th style="width:110px">ULM Rating</th>
         <th>ULM Evidence</th>
       </tr>
       <tr>
-        <td><div class="comp-name">Company Values Fit</div></td>
-        <td><div class="comp-desc">In general</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Company Values Fit</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">In general</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Situation → Action → Result..."/></td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Collaboration Style</div></td>
-        <td><div class="comp-desc">Works constructively with others, communicates clearly, and respects diverse perspectives.</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Collaboration Style</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Works constructively with others, communicates clearly, and respects diverse perspectives.</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Situation → Action → Result..."/></td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Accountability &amp; Ownership</div></td>
-        <td><div class="comp-desc">Takes responsibility for outcomes, follows through on commitments, and avoids blame shifting.</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Accountability &amp; Ownership</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Takes responsibility for outcomes, follows through on commitments, and avoids blame shifting.</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Situation → Action → Result..."/></td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Learning &amp; Adaptability</div></td>
-        <td><div class="comp-desc">Shows openness to feedback, learns quickly from experience, and adapts effectively to change.</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Learning &amp; Adaptability</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Shows openness to feedback, learns quickly from experience, and adapts effectively to change.</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Situation → Action → Result..."/></td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Professional Character &amp; Maturity</div></td>
-        <td><div class="comp-desc">Demonstrates humility, integrity, emotional stability, and professionalism in interactions and decision-making.</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Professional Character &amp; Maturity</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Demonstrates humility, integrity, emotional stability, and professionalism in interactions and decision-making.</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Situation → Action → Result..."/></td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
@@ -2394,7 +2775,7 @@ ${currentRole === "hm" ? `
     </div>
     <div style="margin-top:16px;">
       <div style="font-size:11px;font-weight:800;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Overall Comment</div>
-      <textarea class="form-input form-textarea" style="min-height:90px;" placeholder="Summarize overall assessment — strengths, areas to watch, recommendations for next round.&#10;&#10;E.g. Strong technical foundation with good strategic instincts. Execution pace needs monitoring — recommend awareness note for onboarding manager.">Strong technical foundation with good strategic instincts. Execution pace needs monitoring — recommend awareness note for onboarding manager.</textarea>
+      <textarea class="form-input form-textarea" style="min-height:90px;" value="Strong candidate — domain knowledge and product execution depth are well above baseline for G6. Led MAU growth at Shopee with direct cross-functional ownership, scope closely mirrors this role. Key watch points: (1) resilience under setbacks needs further validation in Round 2, (2) ULM to probe strategic thinking at division level. Overall recommendation: Proceed to Round 2 with ULM." placeholder="Summarize overall assessment — strengths, areas to watch, recommendations for next round.&#10;&#10;E.g. Strong technical foundation with good strategic instincts. Execution pace needs monitoring — recommend awareness note for onboarding manager.">Strong technical foundation with good strategic instincts. Execution pace needs monitoring — recommend awareness note for onboarding manager.</textarea>
     </div>
   </div>
 </div>
@@ -2421,52 +2802,87 @@ function pageCulture_HRBP() { return `
   </div>
   <div class="form-body">
     <table class="comp-table">
-      <tr><th>Behavior & Character Dimension</th><th style="width:32%">Description</th><th style="width:100px">Rating</th><th>Evidence</th><th style="width:90px">Risk Flag</th></tr>
+      <tr><th style="width:26%">Dimension <span style="font-size:9px;font-weight:400;opacity:0.7;">(hover for description)</span></th><th style="width:110px">Rating</th><th>Evidence</th><th style="width:90px">Risk Flag</th></tr>
       <tr>
-        <td><div class="comp-name">Ownership & Accountability</div></td>
-        <td><div class="comp-desc">Takes responsibility, follows through, avoids blame culture</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Ownership & Accountability</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Takes responsibility, follows through, avoids blame culture</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
         <td><select class="form-input form-select" style="font-size:10px"><option>-</option><option>LOW</option><option>MID</option><option>HIGH</option></select></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Teamwork & Collaboration</div></td>
-        <td><div class="comp-desc">Cross-functional maturity, handles disagreement constructively</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Teamwork & Collaboration</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Cross-functional maturity, handles disagreement constructively</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="3">★★★☆☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
         <td><select class="form-input form-select" style="font-size:10px"><option>-</option><option selected>MID</option><option>HIGH</option></select></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Learning & Growth Mindset</div></td>
-        <td><div class="comp-desc">Self-awareness, openness to feedback, continuous improvement</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Learning & Growth Mindset</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Self-awareness, openness to feedback, continuous improvement</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="5">★★★★★</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
         <td><select class="form-input form-select" style="font-size:10px"><option selected>-</option></select></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Execution Discipline</div></td>
-        <td><div class="comp-desc">Reliability, quality focus, commitment to standards</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Execution Discipline</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Reliability, quality focus, commitment to standards</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="3">★★★☆☆</div></td>
         <td><input class="form-input" value="Gave examples of completing tasks but unclear on how handled quality trade-offs"/></td>
         <td><select class="form-input form-select" style="font-size:10px"><option>-</option><option selected>MID</option></select></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Professional Character & Maturity</div></td>
-        <td><div class="comp-desc">Humility, ego awareness, emotional resilience, integrity</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Professional Character & Maturity</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Humility, ego awareness, emotional resilience, integrity</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
         <td><select class="form-input form-select" style="font-size:10px"><option selected>-</option></select></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Environment & Sustainability Fit</div></td>
-        <td><div class="comp-desc">Fast-change comfort, long-term stability outlook</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Environment & Sustainability Fit</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Fast-change comfort, long-term stability outlook</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
         <td><select class="form-input form-select" style="font-size:10px"><option selected>-</option></select></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Motivation & Org Alignment</div></td>
-        <td><div class="comp-desc">Clarity of intent to join, alignment with company direction</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Motivation & Org Alignment</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Clarity of intent to join, alignment with company direction</div>
+          </div>
+        </td>
         <td><div class="star-row" data-val="4">★★★★☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
         <td><select class="form-input form-select" style="font-size:10px"><option selected>-</option></select></td>
@@ -2482,16 +2898,20 @@ function pageCulture_HRBP() { return `
   </div>
   <div class="form-body">
     <table class="comp-table">
-      <tr><th>Dimension</th><th>Description</th><th>Signal</th><th>Evidence</th></tr>
+      <tr><th style="width:26%">Dimension <span style="font-size:9px;font-weight:400;opacity:0.7;">(hover)</span></th><th style="width:110px">Signal</th><th>Evidence</th></tr>
       <tr>
-        <td><div class="comp-name">Role Understanding</div></td>
-        <td><div class="comp-desc">Understands responsibilities & expectations clearly</div></td>
+        <td>
+          <div class="comp-tooltip-wrap">
+            <span class="comp-name">Role Understanding</span>
+            <span class="comp-tooltip-icon">i</span>
+            <div class="comp-tooltip-box">Understands responsibilities & expectations clearly</div>
+          </div>
+        </td>
         <td><select class="form-input form-select"><option>Low</option><option selected>Medium</option><option>High</option></select></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
       </tr>
       <tr>
-        <td><div class="comp-name">Capability Credibility vs Level</div></td>
-        <td><div class="comp-desc">Communication reflects operating at stated level</div></td>
+        <td><div class="comp-tooltip-wrap"><span class="comp-name">Capability Credibility vs Level</span><span class="comp-tooltip-icon">i</span><div class="comp-tooltip-box">Communication reflects operating at stated level. Vocabulary, judgment calls, and examples should match the seniority claimed.</div></div></td>
         <td><select class="form-input form-select"><option>Low</option><option>Medium</option><option selected>High</option></select></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
       </tr>
@@ -3805,6 +4225,501 @@ function showInterviewDetail(round) {
 
 // ─── INIT ─────────────────────────────────────────────
 render();
+setTimeout(updateNavButtons, 50);
+setTimeout(updateWizardBar, 50);
+
+// ─── SCREENING FORM ──────────────────────────────────────
+const screeningData = {};
+
+// ── Pre-filled screening results (TA has already completed these) ──
+const prefilledScreening = {
+  0: { // Chung Tiến Minh Trí
+    locked: true,
+    recruiter: 'Mai Đặng Huyền Trang',
+    date: '2026-03-10',
+    type: 'Video',
+    overall: 'Recommend to Interview',
+    notes: 'Strong PM profile from Shopee ecosystem. Meets seniority and scope requirements. HM preference for Grab/Shopee background confirmed. Compensation expectation within budget range.',
+    'rating_exp-rel': 5, 'ev_exp-rel': '7 years PM experience at Grab and Shopee — directly relevant to Growth squad context at MoMo.',
+    'rating_success-sig': 5, 'ev_success-sig': 'Led MAU growth experiments independently. Track record aligns strongly with Hiring Alignment criteria.',
+    'rating_reason-change': 4, 'ev_reason-change': 'Seeking larger ownership scope and strategic remit — motivations align well with this role.',
+    'rating_career-dir': 5, 'ev_career-dir': 'Clear trajectory from IC PM to squad lead. Career direction matches role expectations.',
+    'rating_motivation': 4, 'ev_motivation': 'Articulate on MoMo growth ambition and payment product landscape. High genuine interest.',
+    'rating_culture-fit': 4, 'ev_culture-fit': 'Collaborative, direct communication style. Comfortable with ambiguity. Good culture signal.',
+    testTiming: 'Before screening', testResult: 'Pass', testScore: '78/100',
+  },
+  1: { // Đinh Thị Huyền Thương
+    locked: true,
+    recruiter: 'Mai Đặng Huyền Trang',
+    date: '2026-03-11',
+    type: 'Call',
+    overall: 'Recommend — Validate concern',
+    notes: 'Good product sense and stakeholder skills but limited people management depth. Recommend proceeding with HM validation on leadership scope. Watch for: may need structured mentoring to ramp up team management.',
+    'rating_exp-rel': 3, 'ev_exp-rel': 'PM experience at Lazada and Tiki relevant, but scope is smaller than target. No direct squad ownership yet.',
+    'rating_success-sig': 3, 'ev_success-sig': 'Delivered on individual projects well. Less evidence of driving cross-functional outcomes at senior level.',
+    'rating_reason-change': 5, 'ev_reason-change': 'Clear career motivation — wants to move into product leadership. Aligned.',
+    'rating_career-dir': 4, 'ev_career-dir': 'On a leadership track. MoMo role would be a stretch but appropriate next step.',
+    'rating_motivation': 4, 'ev_motivation': 'Strong interest in fintech product specifically. Researched MoMo product well.',
+    'rating_culture-fit': 4, 'ev_culture-fit': 'Positive energy, collaborative. Fit signals are good.',
+    testTiming: 'During Screening', testResult: 'Pass', testScore: '71/100',
+  },
+  2: { // Trần Ngọc Lân
+    locked: true,
+    recruiter: 'Mai Đặng Huyền Trang',
+    date: '2026-03-12',
+    type: 'Video',
+    overall: 'Hold (Pending test / Clarification)',
+    notes: 'Strong strategic background but compensation expectation (55M+) is above approved budget range. Pending Finance clarification on budget flexibility before proceeding. Strong candidate — worth holding.',
+    'rating_exp-rel': 5, 'ev_exp-rel': '8 years PM at Sea Group — highly relevant scope and complexity.',
+    'rating_success-sig': 5, 'ev_success-sig': 'Led products with 10M+ users. Strong execution and ownership signals.',
+    'rating_reason-change': 3, 'ev_reason-change': 'Seeking higher compensation primarily. Motivation partially extrinsic — risk if budget cannot meet expectation.',
+    'rating_career-dir': 5, 'ev_career-dir': 'Clearly scoped for senior PM or head of product. Right level for this role.',
+    'rating_motivation': 3, 'ev_motivation': 'Interest in MoMo is moderate — more interested in scope than company specifically.',
+    'rating_culture-fit': 4, 'ev_culture-fit': 'Professional and structured. Should fit MoMo operating style.',
+    testTiming: 'During Screening', testResult: 'Pass', testScore: '82/100',
+  },
+  3: { // Huỳnh Thị Minh Trang
+    locked: true,
+    recruiter: 'Mai Đặng Huyền Trang',
+    date: '2026-03-13',
+    type: 'CV',
+    overall: 'Recommend — Validate concern',
+    notes: 'Previous MoMo tenure is a positive signal for culture fit. Slightly below target seniority but showed growth mindset in screening. Recommend HM conversation to assess leadership readiness.',
+    'rating_exp-rel': 3, 'ev_exp-rel': 'PM at MoMo previously + ZaloPay. Relevant domain, slightly below seniority target.',
+    'rating_success-sig': 3, 'ev_success-sig': 'Good execution record, but outcomes are below the scale expected for this role.',
+    'rating_reason-change': 4, 'ev_reason-change': 'Wants to return to MoMo at a higher level — positive intent.',
+    'rating_career-dir': 3, 'ev_career-dir': 'Aspires toward squad lead. Current level is PM, not Senior PM — gap exists.',
+    'rating_motivation': 5, 'ev_motivation': 'Very high motivation. Strong familiarity with MoMo product and team.',
+    'rating_culture-fit': 5, 'ev_culture-fit': 'Previous MoMo employee — cultural alignment is strong.',
+    testTiming: '', testResult: '', testScore: '',
+  },
+  4: { // Tạ Quốc Anh
+    locked: true,
+    recruiter: 'Mai Đặng Huyền Trang',
+    date: '2026-03-14',
+    type: 'Call',
+    overall: 'Stop',
+    notes: 'Interesting growth hacking background but scope and maturity of experience is significantly below requirement. Only 4 years experience with no evidence of squad-level ownership. Not suitable for G6 Senior PM.',
+    'rating_exp-rel': 2, 'ev_exp-rel': '4 years at early-stage startup. Scope and complexity far below target for G6 role.',
+    'rating_success-sig': 2, 'ev_success-sig': 'Good individual contributor signals but no cross-functional leadership evidence.',
+    'rating_reason-change': 4, 'ev_reason-change': 'Looking to move from startup to scale. Motivation is clear.',
+    'rating_career-dir': 2, 'ev_career-dir': 'Career direction is valid but timeline is 2-3 years ahead of where this role requires.',
+    'rating_motivation': 3, 'ev_motivation': 'Moderate interest. MoMo is one of several options being explored.',
+    'rating_culture-fit': 3, 'ev_culture-fit': 'Positive attitude but limited exposure to structured product teams.',
+    testTiming: 'Before screening', testResult: 'Fail', testScore: '54/100',
+  },
+};
+
+// Merge prefilled data into screeningData on load
+Object.keys(prefilledScreening).forEach(function(k) {
+  screeningData[parseInt(k)] = prefilledScreening[parseInt(k)];
+});
+
+
+function getStarsHtml(rating, max) {
+  max = max || 5;
+  let h = '';
+  for (let i = 1; i <= max; i++) {
+    h += '<span style="color:' + (i <= rating ? '#AE2070' : '#D1D5DB') + ';font-size:15px;">' + (i <= rating ? '★' : '☆') + '</span>';
+  }
+  return h;
+}
+
+function getResultBadge(overall) {
+  const map = {
+    'Recommend to Interview':          { bg:'#DCFCE7', color:'#15803D', icon:'✓' },
+    'Recommend — Validate concern':    { bg:'#FEF9C3', color:'#B45309', icon:'⚠' },
+    'Hold (Pending test / Clarification)': { bg:'#F3F4F6', color:'#4B5563', icon:'⏸' },
+    'Stop':                            { bg:'#FEE2E2', color:'#DC2626', icon:'✗' },
+  };
+  const s = map[overall] || { bg:'#F3F4F6', color:'#6B7280', icon:'–' };
+  return '<span style="background:' + s.bg + ';color:' + s.color + ';font-size:12px;font-weight:800;padding:6px 14px;border-radius:8px;display:inline-flex;align-items:center;gap:6px;">' + s.icon + ' ' + (overall || 'Not yet assessed') + '</span>';
+}
+
+
+function closeScreeningPanel() {
+  var p = document.getElementById('screening-panel');
+  if (p) p.remove();
+}
+function openScreeningReadOnly(candidateIdx, sd) {
+  const panel = document.createElement('div');
+  panel.id = 'screening-panel';
+  panel.className = 'screening-panel';
+  panel.style.width = '560px';
+
+  const candidates = [
+    { name: 'Chung Tiến Minh Trí',    title: 'Senior PM · Shopee → Tiki · 6 yrs' },
+    { name: 'Đinh Thị Huyền Thương',  title: 'PM · Lazada → Tiki · 5 yrs' },
+    { name: 'Trần Ngọc Lân',          title: 'PM · Sea Group · 8 yrs' },
+    { name: 'Huỳnh Thị Minh Trang',   title: 'PM · MoMo (prev) · 6 yrs' },
+    { name: 'Tạ Quốc Anh',            title: 'PM · Startup · 4 yrs' },
+  ];
+  const c = candidates[candidateIdx] || candidates[0];
+
+  const criteriaRows = [
+    { label: 'Experience relevance to the role', key: 'exp-rel' },
+    { label: 'Success signals match to Hiring Alignment', key: 'success-sig' },
+    { label: 'Reason for change — aligned with role', key: 'reason-change' },
+    { label: 'Career direction aligns with role', key: 'career-dir' },
+    { label: 'Interest in MoMo & role understanding', key: 'motivation' },
+    { label: 'Fit with MoMo way of working', key: 'culture-fit' },
+  ];
+
+  const ratingLabels = ['','Below expectation','Low fit','Moderate fit','Good fit','Strong fit'];
+
+  let criteriaHtml = '';
+  criteriaRows.forEach(function(row) {
+    const rating = parseInt(sd['rating_' + row.key]) || 0;
+    const ev = sd['ev_' + row.key] || '';
+    criteriaHtml += '<div style="padding:10px 0;border-bottom:1px solid #F3F4F6;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+        '<div style="font-size:11px;font-weight:700;color:#374151;">' + row.label + '</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          getStarsHtml(rating) +
+          '<span style="font-size:10px;color:#6B7280;min-width:100px;">' + (ratingLabels[rating] || 'Not rated') + '</span>' +
+        '</div>' +
+      '</div>' +
+      (ev ? '<div style="font-size:11px;color:#4B5563;background:#F9FAFB;border-radius:6px;padding:6px 10px;line-height:1.5;">' + ev + '</div>' : '') +
+    '</div>';
+  });
+
+  const testHtml = sd.testTiming ? (
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">' +
+      '<div><div class="s-label">Test Conducted</div><div style="font-size:12px;font-weight:600;color:#374151;margin-top:3px;">' + sd.testTiming + '</div></div>' +
+      '<div><div class="s-label">Result</div><div style="font-size:12px;font-weight:700;color:' + (sd.testResult==='Pass'?'#15803D':sd.testResult==='Fail'?'#DC2626':'#B45309') + ';margin-top:3px;">' + sd.testResult + '</div></div>' +
+      '<div><div class="s-label">Score</div><div style="font-size:12px;font-weight:600;color:#374151;margin-top:3px;">' + (sd.testScore || '—') + '</div></div>' +
+    '</div>'
+  ) : '<div style="font-size:11px;color:#9CA3AF;font-style:italic;">Not conducted</div>';
+
+  panel.innerHTML =
+    '<div class="screening-panel-header">' +
+      '<div>' +
+        '<div style="font-size:13px;font-weight:800;color:#A40063;">' + c.name + '</div>' +
+        '<div style="font-size:11px;color:#6B7280;margin-top:2px;">' + c.title + '</div>' +
+        '<div style="margin-top:4px;font-size:10px;color:#6B7280;">Screened by ' + (sd.recruiter || 'TA') + ' · ' + (sd.date || '') + ' · ' + (sd.type || '') + '</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:8px;">' +
+        (currentRole === 'hrta' ? '<button onclick="unlockScreening(' + candidateIdx + ')" style="background:none;color:var(--brand);border:1.5px solid var(--brand-lt);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;">✏ Edit</button>' : '<span style="font-size:10px;font-weight:700;color:#6B7280;background:#F3F4F6;padding:3px 8px;border-radius:20px;">View Only</span>') +
+        '<button onclick="closeScreeningPanel()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#888;line-height:1;">✕</button>' +
+      '</div>' +
+    '</div>' +
+    '<div style="flex:1;overflow-y:auto;padding:16px 20px;">' +
+      '<div style="margin-bottom:16px;">' +
+        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#AE2070;margin-bottom:8px;">Overall Screening Result</div>' +
+        getResultBadge(sd.overall) +
+      '</div>' +
+      '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#AE2070;margin-bottom:6px;">Role Readiness, Motivation & Culture Fit</div>' +
+      criteriaHtml +
+      '<div style="margin-top:14px;">' +
+        '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#AE2070;margin-bottom:8px;">Cognitive Test</div>' +
+        testHtml +
+      '</div>' +
+      (sd.notes ? '<div style="margin-top:14px;padding:12px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;">' +
+        '<div style="font-size:10px;font-weight:800;color:#B45309;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">TA Notes</div>' +
+        '<div style="font-size:12px;color:#374151;line-height:1.6;">' + sd.notes + '</div>' +
+      '</div>' : '') +
+    '</div>';
+
+  document.body.appendChild(panel);
+}
+
+function unlockScreening(idx) {
+  if (screeningData[idx]) screeningData[idx].locked = false;
+  document.getElementById('screening-panel').remove();
+  openScreening(idx);
+}
+
+function openScreening(candidateIdx) {
+  // Remove existing panel
+  const existing = document.getElementById('screening-panel');
+  if (existing) { existing.remove(); return; }
+
+  const sd = screeningData[candidateIdx] || {};
+
+  // If data is locked (pre-filled / saved result), show read-only panel
+  if (sd.locked && currentRole !== 'hrta') {
+    openScreeningReadOnly(candidateIdx, sd);
+    return;
+  }
+  // TA viewing a locked result: show read-only too (but with Edit option)
+  if (sd.locked && currentRole === 'hrta') {
+    openScreeningReadOnly(candidateIdx, sd);
+    return;
+  }
+
+  const candidates = [
+    { name: 'Chung Tiến Minh Trí', title: 'Senior PM · Shopee → Tiki · 6 yrs' },
+    { name: 'Đinh Thị Huyền Thương', title: 'HRBP Lead · Lazada → Tiki · 7 yrs' },
+    { name: 'Trần Ngọc Lân', title: 'PM · VNPay · 4 yrs' },
+    { name: 'Huỳnh Thị Minh Trang', title: 'Senior PM · ZaloPay · 5 yrs' },
+    { name: 'Tạ Quốc Anh', title: 'PM · Sea Group · 3 yrs' },
+  ];
+  const c = candidates[candidateIdx] || candidates[0];
+    const panel = document.createElement('div');
+  panel.id = 'screening-panel';
+  panel.className = 'screening-panel';
+
+  panel.innerHTML = `
+    <div class="screening-panel-header">
+      <div>
+        <div style="font-size:13px;font-weight:800;color:#A40063;">${c.name}</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:2px;">${c.title}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button id="save-screening-${candidateIdx}" onclick="saveScreeningResult(${candidateIdx})" style="background:var(--brand);color:white;border:none;border-radius:20px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">Save Result</button>
+        <button onclick="document.getElementById('screening-panel').remove()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#888;">✕</button>
+      </div>
+    </div>
+    <div class="screening-panel-body">
+      <!-- LEFT: Mini CV -->
+      <div class="screening-cv-col">
+        <div style="font-size:11px;font-weight:800;color:#374151;margin-bottom:10px;">Candidate Summary</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div><div style="font-size:9px;font-weight:700;color:#9CA3AF;text-transform:uppercase;">Education</div><div style="font-size:11px;color:#374151;margin-top:2px;">Bachelor, Business — RMIT</div></div>
+          <div><div style="font-size:9px;font-weight:700;color:#9CA3AF;text-transform:uppercase;">Experience</div>
+            <div style="font-size:11px;color:#374151;margin-top:2px;line-height:1.5;">
+              <div style="margin-bottom:4px;"><strong>Senior PM — Tiki</strong><br/>2021–2024 · Growth & Payments</div>
+              <div style="margin-bottom:4px;"><strong>PM — Shopee VN</strong><br/>2018–2021 · Marketplace</div>
+            </div>
+          </div>
+          <div><div style="font-size:9px;font-weight:700;color:#9CA3AF;text-transform:uppercase;">Key Skills</div><div style="font-size:11px;color:#374151;margin-top:2px;">Product strategy · A/B testing · SQL · Stakeholder mgmt</div></div>
+          <div><div style="font-size:9px;font-weight:700;color:#9CA3AF;text-transform:uppercase;">Languages</div><div style="font-size:11px;color:#374151;margin-top:2px;">Vietnamese (native) · English (fluent)</div></div>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid #F3F4F6;">
+          <div style="font-size:9px;font-weight:700;color:#9CA3AF;text-transform:uppercase;margin-bottom:6px;">Recruiter Note</div>
+          <div style="font-size:11px;color:#374151;font-style:italic;">Strong profile from Shopee ecosystem. HM preference met.</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Screening Form -->
+      <div class="screening-form-col">
+        <!-- Meta -->
+        <div class="s-section-title">Screening Info</div>
+        <div class="s-row">
+          <div class="s-label">Recruiter</div>
+          <input class="form-input" style="font-size:11px;" value="Mai Đặng Huyền Trang" id="sc-recruiter-${candidateIdx}"/>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="s-row">
+            <div class="s-label">Screening Date</div>
+            <input class="form-input" type="date" style="font-size:11px;" id="sc-date-${candidateIdx}" value="${sd.date||''}"/>
+          </div>
+          <div class="s-row">
+            <div class="s-label">Screening Type</div>
+            <select class="form-input form-select" style="font-size:11px;" id="sc-type-${candidateIdx}">
+              <option ${sd.type==='CV'?'selected':''}>CV</option>
+              <option ${sd.type==='Call'?'selected':''}>Call</option>
+              <option ${sd.type==='Video'?'selected':''}>Video</option>
+              <option ${sd.type==='In-person'?'selected':''}>In-person</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Role Readiness -->
+        <div class="s-section-title" style="margin-top:14px;">Role Readiness & Quality</div>
+        ${screeningCriteriaRow('Experience relevance to the role', 'exp-rel', candidateIdx, sd)}
+        ${screeningCriteriaRow('Success signals match to Hiring Alignment', 'success-sig', candidateIdx, sd)}
+        ${screeningCriteriaRow('Reason for change — aligned with role', 'reason-change', candidateIdx, sd)}
+        ${screeningCriteriaRow('Career direction aligns with role', 'career-dir', candidateIdx, sd)}
+
+        <!-- Motivation -->
+        <div class="s-section-title" style="margin-top:14px;">Motivation</div>
+        ${screeningCriteriaRow('Interest in MoMo & role understanding', 'motivation', candidateIdx, sd)}
+
+        <!-- Fit to MoMo -->
+        <div class="s-section-title" style="margin-top:14px;">Fit to MoMo</div>
+        ${screeningCriteriaRow('Fit with MoMo way of working', 'culture-fit', candidateIdx, sd)}
+
+        <!-- Cognitive Test -->
+        <div class="s-section-title" style="margin-top:14px;">Cognitive Test</div>
+        <div class="s-row">
+          <div class="s-label">Test Conducted</div>
+          <select class="form-input form-select" style="font-size:11px;" id="sc-test-timing-${candidateIdx}">
+            <option value="">— Not conducted —</option>
+            <option>Before screening</option>
+            <option>During Screening</option>
+            <option>During Interview</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="s-row">
+            <div class="s-label">Result vs. Threshold</div>
+            <select class="form-input form-select" style="font-size:11px;" id="sc-test-result-${candidateIdx}">
+              <option value="">—</option>
+              <option>Pass</option>
+              <option>Fail</option>
+              <option>Pending</option>
+            </select>
+          </div>
+          <div class="s-row">
+            <div class="s-label">Overall Score</div>
+            <input class="form-input" style="font-size:11px;" placeholder="e.g. 72/100" id="sc-test-score-${candidateIdx}"/>
+          </div>
+        </div>
+
+        <!-- Overall Result -->
+        <div class="s-section-title" style="margin-top:14px;">Overall Screening Result</div>
+        <div style="display:flex;flex-direction:column;gap:6px;" id="sc-overall-group-${candidateIdx}">
+          ${['Recommend to Interview','Recommend \u2014 Validate concern','Hold (Pending test / Clarification)','Stop'].map(function(opt,i) {
+            return '<button class="s-result-btn ' + (sd.overall===opt?'s-active':'') + '" onclick="selectScreeningResult(' + candidateIdx + ',\'' + opt + '\',this)">' + opt + '</button>';
+          }).join('')}
+        </div>
+        <div class="s-row" style="margin-top:8px;">
+          <div class="s-label">TA Notes</div>
+          <textarea class="form-input" rows="2" style="font-size:11px;resize:vertical;" id="sc-notes-${candidateIdx}" placeholder="Key observations, concerns, or context for HM & HRBP...">${sd.notes||''}</textarea>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // If not TA, make form read-only
+  setTimeout(function() {
+    if (currentRole !== 'hrta') {
+      const saveBtn = document.getElementById('save-screening-' + candidateIdx);
+      if (saveBtn) saveBtn.style.display = 'none';
+      panel.querySelectorAll('input, select, textarea, button.s-rating-btn, button.s-result-btn').forEach(function(el) {
+        el.disabled = true;
+        el.style.pointerEvents = 'none';
+        el.style.opacity = '0.7';
+      });
+      const header = panel.querySelector('.screening-panel-header');
+      if (header) {
+        const tag = document.createElement('span');
+        tag.textContent = 'View Only';
+        tag.style.cssText = 'font-size:10px;font-weight:700;color:#6B7280;background:#F3F4F6;padding:3px 8px;border-radius:20px;';
+        header.appendChild(tag);
+      }
+    }
+  }, 50);
+
+  document.body.appendChild(panel);
+}
+
+function screeningCriteriaRow(label, key, idx, sd) {
+  const rating = parseInt(sd['rating_'+key]) || 0;
+  const evidence = sd['ev_'+key] || '';
+  let starsHtml = '';
+  for (let v = 1; v <= 5; v++) {
+    starsHtml += '<span onclick="selectScreeningRating(\'' + key + '\',' + idx + ',' + v + ',this.parentNode)" style="font-size:18px;cursor:pointer;color:' + (v <= rating ? '#AE2070' : '#D1D5DB') + ';transition:color .1s;" data-val="' + v + '">' + (v <= rating ? '★' : '☆') + '</span>';
+  }
+  return `
+    <div class="s-row">
+      <div class="s-label">${label}</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:3px;">
+        <div id="sc-stars-${key}-${idx}" style="display:flex;gap:2px;line-height:1;">${starsHtml}</div>
+        <span style="font-size:10px;color:var(--text-muted);" id="sc-star-label-${key}-${idx}">${rating ? ['','Below expectation','Low fit','Moderate fit','Good fit','Strong fit'][rating] : 'Not rated'}</span>
+      </div>
+      <input class="form-input" style="font-size:11px;margin-top:5px;" placeholder="Evidence / Key observation..." id="sc-ev-${key}-${idx}" value="${evidence}"/>
+    </div>
+  `;
+}
+
+function selectScreeningRating(key, idx, val, container) {
+  // container is the star row div
+  if (!container) return;
+  const stars = container.querySelectorAll('span[data-val]');
+  const labels = ['','Below expectation','Low fit','Moderate fit','Good fit','Strong fit'];
+  stars.forEach(function(s) {
+    const v = parseInt(s.getAttribute('data-val'));
+    s.textContent = v <= val ? '★' : '☆';
+    s.style.color = v <= val ? '#AE2070' : '#D1D5DB';
+  });
+  const labelEl = document.getElementById('sc-star-label-' + key + '-' + idx);
+  if (labelEl) labelEl.textContent = labels[val] || '';
+  if (!screeningData[idx]) screeningData[idx] = {};
+  screeningData[idx]['rating_'+key] = val;
+}
+
+function selectScreeningResult(idx, val, btn) {
+  const group = document.getElementById('sc-overall-group-'+idx);
+  group.querySelectorAll('.s-result-btn').forEach(b => b.classList.remove('s-active'));
+  btn.classList.add('s-active');
+  if (!screeningData[idx]) screeningData[idx] = {};
+  screeningData[idx].overall = val;
+}
+
+
+
+function refreshHRTATable() {
+  const ratingMap = {
+    'Recommend to Interview':              { stars: 5, color: 'var(--green)' },
+    'Recommend — Validate concern':        { stars: 4, color: 'var(--amber)' },
+    'Hold (Pending test / Clarification)': { stars: 3, color: '#6B7280' },
+    'Stop':                               { stars: 1, color: 'var(--red,#DC2626)' },
+  };
+  for (let i = 0; i < 5; i++) {
+    const el = document.getElementById('ta-rating-' + i);
+    if (!el) continue;
+    const sd = screeningData[i];
+    if (sd && sd.overall) {
+      const rm = ratingMap[sd.overall] || { stars: 3, color: '#6B7280' };
+      let stars = '';
+      for (let s = 1; s <= 5; s++) {
+        stars += '<span style="color:' + (s <= rm.stars ? rm.color : '#D1D5DB') + ';font-size:14px;">' + (s <= rm.stars ? '★' : '☆') + '</span>';
+      }
+      el.innerHTML = stars;
+    }
+  }
+}
+function refreshPipelineRatings() {
+  const resultColors = {
+    'Recommend to Interview': 'var(--green)',
+    'Recommend — Validate concern': 'var(--amber)',
+    'Hold (Pending test / Clarification)': '#6B7280',
+    'Stop': 'var(--red, #DC2626)',
+  };
+  const resultLabels = {
+    'Recommend to Interview': '✓ Recommend',
+    'Recommend — Validate concern': '⚠ Recommend w/ concern',
+    'Hold (Pending test / Clarification)': '⏸ Hold',
+    'Stop': '✗ Stop',
+  };
+  for (let i = 0; i < 5; i++) {
+    const el = document.getElementById('ta-rating-' + i);
+    if (!el) continue;
+    const sd = screeningData[i];
+    if (sd && sd.overall) {
+      el.textContent = resultLabels[sd.overall] || sd.overall;
+      el.style.color = resultColors[sd.overall] || '#6B7280';
+      el.style.fontSize = '10px';
+    }
+  }
+}
+function saveScreeningResult(idx) {
+  if (!screeningData[idx]) screeningData[idx] = {};
+  const d = screeningData[idx];
+  d.date = document.getElementById('sc-date-'+idx)?.value || '';
+  d.type = document.getElementById('sc-type-'+idx)?.value || '';
+  d.notes = document.getElementById('sc-notes-'+idx)?.value || '';
+  d.overall = d.overall || '';
+
+  // Flash save button
+  const btn = document.getElementById('save-screening-'+idx);
+  if (btn) { btn.textContent = '✓ Saved!'; setTimeout(() => { btn.textContent = 'Save Result'; }, 1500); }
+
+  // Update the candidate card badge
+  refreshPipelineRatings();
+  const badge = document.getElementById('screening-badge-'+idx);
+  if (badge) {
+    const colorMap = {
+      'Recommend to Interview': '#16A34A',
+      'Recommend — Validate concern': '#D97706',
+      'Hold (Pending test / Clarification)': '#6B7280',
+      'Stop': '#DC2626',
+    };
+    const col = colorMap[d.overall] || '#6B7280';
+    badge.style.display = 'inline-flex';
+    badge.style.background = col + '18';
+    badge.style.color = col;
+    badge.style.borderColor = col + '40';
+    badge.textContent = d.overall || 'Screened';
+  }
+}
+
+function viewScreeningResult(idx) {
+  openScreening(idx);
+}
+
 </script>
 </body>
 </html>
