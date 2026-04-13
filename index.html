@@ -427,6 +427,20 @@ body {
 .decision-card.selected { border-color:var(--brand); background:var(--brand-xl); }
 .decision-card .dc-title { font-weight:700; font-size:12px; }
 
+/* ── STICKY FOOTER ── */
+.sticky-action-bar {
+  position:sticky; bottom:0;
+  background:var(--surface); border-top:1.5px solid var(--border);
+  padding:10px 20px; display:flex; align-items:center; gap:10px;
+  z-index:50; margin:0 -32px; box-shadow:0 -4px 16px rgba(0,0,0,0.06);
+}
+/* ── COLLAPSIBLE ── */
+.collapse-toggle { cursor:pointer; user-select:none; display:flex; align-items:center; gap:6px; }
+.collapse-toggle .chevron { font-size:10px; transition:transform .2s; display:inline-block; }
+.collapse-toggle.open .chevron { transform:rotate(90deg); }
+.collapse-body { overflow:hidden; transition:max-height .25s ease; }
+
+/* ── STICKY FOOTER ── */
 /* ── HIRING QUALITY ── */
 .hq-options { display:flex; gap:8px; }
 .hq-card { flex:1; border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:12px 8px; cursor:pointer; text-align:center; transition:all .15s; background:var(--surface); }
@@ -932,8 +946,8 @@ function gradeToIntakeNote(g) {
 
 // Grade cascade helpers
 function gradeToRefDepth(g) {
-  if (g <= 4) return { label:'Baseline', color:'var(--green)', time:"20'" };
-  if (g === 5) return { label:'Standard', color:'var(--blue)', time:"30'" };
+  if (g <= 3) return { label:'Baseline', color:'var(--green)', time:"20'" };
+  if (g <= 5) return { label:'Standard', color:'var(--blue)', time:"30'" };
   return { label:'Comprehensive', color:'#5B21B6', time:"45'" };
 }
 function gradeToInterviewRounds(g) {
@@ -1155,6 +1169,24 @@ function bindDashboardInteractions() {
   // nothing needed — all handlers are inline onclick
 }
 
+function dashBuildTabs() {
+  var tabs = [
+    {i:0,label:'Hiring performance',icon:'📈'},
+    {i:1,label:'Quality of hire',icon:'⭐'},
+    {i:2,label:'Process governance',icon:'✅',badge:'4'},
+  ];
+  return tabs.map(function(t) {
+    var isOn = dashTab === t.i;
+    var badgeHtml = t.badge
+      ? '<span style="background:var(--red-lt);border-radius:20px;padding:1px 7px;font-size:10px;color:' + (isOn?'white':'#791F1F') + ';font-weight:700">' + t.badge + '</span>'
+      : '';
+    return '<button onclick="dashSetTab(' + t.i + ')" id="dbt-' + t.i + '" ' +
+      'style="display:flex;align-items:center;gap:7px;padding:9px 18px;cursor:pointer;border-radius:24px;font-size:12px;font-weight:700;font-family:inherit;white-space:nowrap;border:1.5px solid ' + (isOn?'var(--brand)':'var(--border)') + ';background:' + (isOn?'var(--brand)':'var(--surface)') + ';color:' + (isOn?'white':'var(--text-muted)') + ';transition:all .15s">' +
+      t.icon + ' ' + t.label + ' ' + badgeHtml +
+    '</button>';
+  }).join('');
+}
+
 function pageDashboard_HRTA() {
   return `
 <div style="padding:0 0 40px">
@@ -1189,19 +1221,7 @@ function pageDashboard_HRTA() {
 
 <!-- NAV TABS -->
 <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
-  ${[
-    {i:0,label:'Hiring performance',icon:'📈'},
-    {i:1,label:'Quality of hire',icon:'⭐'},
-    {i:2,label:'Process governance',icon:'✅',badge:'4'},
-  ].map(t => {
-    const isOn = dashTab===t.i;
-    return `<button onclick="dashSetTab(${t.i})" id="dbt-${t.i}"
-      style="display:flex;align-items:center;gap:7px;padding:9px 18px;cursor:pointer;border-radius:24px;font-size:12px;font-weight:700;font-family:inherit;white-space:nowrap;border:1.5px solid ${isOn?'var(--brand)':'var(--border)'};background:${isOn?'var(--brand)':'var(--surface)'};color:${isOn?'white':'var(--text-muted)'};transition:all .15s">
-      <span style="font-size:14px;line-height:1">${t.icon}</span>
-      ${t.label}
-      ${t.badge?`<span style="font-size:9px;padding:1px 6px;border-radius:20px;background:${isOn?'rgba(255,255,255,0.25)':'#FCEBEB'};color:${isOn?'white':'#791F1F'};font-weight:700">${t.badge}</span>`:''}
-    </button>`;
-  }).join('')}
+  ${dashBuildTabs()}
 </div>
 
 <!-- TIME PILLS + DIVISION FILTER -->
@@ -1789,7 +1809,21 @@ function pageDashboard_HM() {
     <button onclick="goToStep(0)" style="background:var(--brand);color:white;border:none;border-radius:8px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ Request new role</button>
   </div>
 
-  <!-- ROW 1: ROLES + CALENDAR side by side -->
+  <!-- ACTIONS NEEDED -->
+    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden">
+      <div style="padding:10px 15px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text-main)">Actions needed</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">Sorted by SLA urgency</div>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:var(--red)">3 pending</span>
+      </div>
+      <div style="padding:10px 12px">${candidatesHTML}</div>
+    </div>
+
+  <!-- ROW 3: RECENTLY COMPLETED -->
+  
+<!-- ROW 1: ROLES + CALENDAR side by side -->
   <div style="display:grid;grid-template-columns:55fr 45fr;gap:12px;margin-bottom:14px;align-items:start">
 
     <!-- MY OPEN ROLES -->
@@ -1840,19 +1874,6 @@ function pageDashboard_HM() {
   </div>
 
   <!-- ROW 2: ACTIONS NEEDED — full width -->
-  <!-- ACTIONS NEEDED -->
-    <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden">
-      <div style="padding:10px 15px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-size:12px;font-weight:700;color:var(--text-main)">Actions needed</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">Sorted by SLA urgency</div>
-        </div>
-        <span style="font-size:11px;font-weight:700;color:var(--red)">3 pending</span>
-      </div>
-      <div style="padding:10px 12px">${candidatesHTML}</div>
-    </div>
-
-  <!-- ROW 3: RECENTLY COMPLETED -->
   <!-- RECENTLY COMPLETED -->
   <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden">
     <div style="padding:10px 15px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="var b=document.getElementById('hm-rc-body');var a=document.getElementById('hm-rc-arrow');var o=b.style.display!=='none';b.style.display=o?'none':'block';a.textContent=o?'▸':'▾'">
@@ -2201,6 +2222,15 @@ function hodSetDiv(k) {
 }
 
 
+function toggleCollapse(bodyId, toggleId) {
+  var body = document.getElementById(bodyId);
+  var tog = document.getElementById(toggleId);
+  if (!body) return;
+  var isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  if (tog) tog.textContent = isOpen ? '▶ Expand' : '▼ Collapse';
+}
+
 function render() {
   const el = document.getElementById('main-content');
   const stepNav = document.getElementById('step-nav');
@@ -2341,28 +2371,48 @@ function pageJD_HM() { return `
 <div class="form-section">
   <div class="form-section-header">
     <div class="form-section-icon" style="background:#EDE9FE">🎓</div>
-    <div><div class="form-section-title">Section IV — Requirements</div><div class="form-section-note">Distinguish must-have from nice-to-have competencies</div></div>
+    <div><div class="form-section-title">Section IV — Job Requirements</div><div class="form-section-note">Refer to the guideline if needed</div></div>
   </div>
   <div class="form-body">
-    <div class="tab-bar">
-      <div class="tab active" onclick="switchTab(this,'tab-func')">Functional Competencies</div>
-      <div class="tab" onclick="switchTab(this,'tab-lead')">Leadership Competencies</div>
+
+    <div style="margin-bottom:16px">
+      <div class="form-label" style="font-weight:700;margin-bottom:6px">Knowledge / Skills</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;font-style:italic">3–5 important knowledge/skills critical for success in this role</div>
+      <div style="display:flex;flex-direction:column;gap:6px" id="jd-knowledge-rows">
+        <div style="display:flex;gap:8px;align-items:center"><input class="form-input" style="flex:1" value="Product-led growth strategy and funnel experimentation"/></div>
+        <div style="display:flex;gap:8px;align-items:center"><input class="form-input" style="flex:1" value="Data analysis — SQL and A/B testing frameworks"/></div>
+        <div style="display:flex;gap:8px;align-items:center"><input class="form-input" style="flex:1" value="Cross-functional stakeholder management"/></div>
+      </div>
+      <button class="btn-ghost" style="align-self:flex-start;font-size:11px;margin-top:6px" onclick="(function(){var r=document.getElementById('jd-knowledge-rows');var d=document.createElement('div');d.style.cssText='display:flex;gap:8px;align-items:center';d.innerHTML='<input class=&quot;form-input&quot; style=&quot;flex:1&quot; placeholder=&quot;Add knowledge or skill...&quot;/>';r.appendChild(d);})()">+ Add knowledge / skill</button>
     </div>
-    <div class="tab-content active" id="tab-func">
-      <div style="display:flex;flex-direction:column;gap:7px;">
-        <div style="display:flex;gap:8px;align-items:center;"><input class="form-input" style="flex:2" value="Product Management & Roadmapping"/><select class="form-input form-select" style="flex:1"><option selected>Must-have</option><option>Nice-to-have</option></select></div>
-        <div style="display:flex;gap:8px;align-items:center;"><input class="form-input" style="flex:2" value="Data Analysis & Growth Metrics"/><select class="form-input form-select" style="flex:1"><option selected>Must-have</option><option>Nice-to-have</option></select></div>
-        <div style="display:flex;gap:8px;align-items:center;"><input class="form-input" style="flex:2" value="A/B Testing & Experimentation"/><select class="form-input form-select" style="flex:1"><option selected>Must-have</option><option>Nice-to-have</option></select></div>
-        <button class="btn-ghost" style="align-self:flex-start;font-size:11px;" onclick="alert('Add competency')">+ Add competency</button>
+
+    <div style="margin-bottom:16px;padding-top:14px;border-top:0.5px solid var(--border)">
+      <div class="form-label" style="font-weight:700;margin-bottom:6px">Working Style &amp; Personality</div>
+      <textarea class="form-input form-textarea" style="min-height:56px" placeholder="Describe preferred working style, personality traits, and cultural fit signals...">Autonomous and data-driven. Comfortable with ambiguity, moves fast without losing quality. Collaborative by default — builds trust across teams before pushing for alignment.</textarea>
+    </div>
+
+    <div style="padding-top:14px;border-top:0.5px solid var(--border)">
+      <div class="form-label" style="font-weight:700;margin-bottom:10px">Education &amp; Experience</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Education background</label>
+          <input class="form-input" value="Bachelor or Master degree in Business, Technology, or related fields"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Certification <span style="color:var(--text-muted);font-weight:400">(if required)</span></label>
+          <input class="form-input" placeholder="e.g. PMP, CFA — leave blank if not required"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Years of experience in relevant roles / fields</label>
+          <input class="form-input" value="5+ years in Product Management or Growth roles"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Industry / domain</label>
+          <input class="form-input" value="Fintech, E-commerce, Super-app"/>
+        </div>
       </div>
     </div>
-    <div class="tab-content" id="tab-lead">
-      <div style="display:flex;flex-direction:column;gap:7px;">
-        <div style="display:flex;gap:8px;align-items:center;"><input class="form-input" style="flex:2" value="Team Leadership & Coaching"/><select class="form-input form-select" style="flex:1"><option selected>Must-have</option><option>Nice-to-have</option></select></div>
-        <div style="display:flex;gap:8px;align-items:center;"><input class="form-input" style="flex:2" value="Stakeholder Influence & Communication"/><select class="form-input form-select" style="flex:1"><option selected>Must-have</option><option>Nice-to-have</option></select></div>
-        <button class="btn-ghost" style="align-self:flex-start;font-size:11px;" onclick="alert('Add competency')">+ Add competency</button>
-      </div>
-    </div>
+
   </div>
 </div>
 <div style="padding-bottom:70px;"></div>`; }
@@ -3234,246 +3284,264 @@ function pageIntake_HRTA() { return `
 
 <div class="form-section">
   <div class="form-section-header">
-    <div class="form-section-icon" style="background:var(--brand-xl)">📌</div>
-    <div><div class="form-section-title">Section 1 — Role &amp; Context</div></div>
+    <div class="form-section-icon" style="background:var(--brand-xl)">ℹ️</div>
+    <div><div class="form-section-title">Section 1 — Role Information</div><div class="form-section-note">Auto-filled from Job Request · Edit if needed</div></div>
   </div>
   <div class="form-body">
     <div class="form-grid">
-      <div class="form-group"><label class="form-label">Role Title</label><input class="form-input filled" value="${jobData.title}" readonly/></div>
-      <div class="form-group"><label class="form-label">Grade</label><input class="form-input filled" value="${jobData.gradeLabel}" readonly/></div>
-      <div class="form-group"><label class="form-label">Department / BU</label><input class="form-input filled" value="${jobData.department}${jobData.division?' / '+jobData.division.split(' ')[0]:''}" readonly/></div>
-      <div class="form-group">
-        <label class="form-label">Hiring Manager <span class="req">*</span></label>
-        <div style="position:relative;">
-          <input class="form-input filled" value="${jobData.reportsTo||'—'}" readonly style="padding-right:80px;"/>
-          <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--blue-lt);color:var(--blue);font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;">↑ from JD</span>
-        </div>
+      <div class="form-group"><label class="form-label">Role Title</label><input class="form-input" value="${jobData.title}" placeholder="Role title"/></div>
+      <div class="form-group"><label class="form-label">Department / BU</label><input class="form-input" value="${jobData.division} — ${jobData.department}" placeholder="Department or Business Unit"/></div>
+      <div class="form-group"><label class="form-label">Grade</label><input class="form-input" value="${jobData.gradeLabel}" placeholder="Job grade"/></div>
+      <div class="form-group"><label class="form-label">Hiring Manager</label><input class="form-input" value="${jobData.reportsTo}" placeholder="Name of Hiring Manager"/></div>
+      <div class="form-group"><label class="form-label">Role Type</label>
+        <select class="form-input form-select">
+          <option${jobData.roleType==='People Management'?' selected':''}>People Management</option>
+          <option${jobData.roleType==='Individual Contributor'?' selected':''}>Individual Contributor</option>
+        </select>
       </div>
-      <div class="form-group"><label class="form-label">Recruiter (TA) <span class="req">*</span></label><input class="form-input" placeholder="Assign TA"/></div>
-      <div class="form-group">
-        <label class="form-label">HRBP <span class="req">*</span></label>
-        <div style="position:relative;">
-          <input class="form-input filled" value="Đỗ Thị Quỳnh An" readonly style="padding-right:100px;"/>
-          <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:#EDE9FE;color:#5B21B6;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;">↑ from Division</span>
-        </div>
-      </div>
-      <div class="form-group"><label class="form-label">Role Type</label><input class="form-input filled" value="${jobData.roleType}" readonly/></div>
-      ${jobData.roleType === 'People Manager' ? `
-      <div class="form-group"><label class="form-label">Number of Direct Reports <span class="req">*</span></label><input class="form-input" placeholder="Specify number of direct reports this role will manage" value="3–5"/></div>` : '<div class="form-group"></div>'}
-      <div class="form-group full"><label class="form-label">Cross-Functional Stakeholders</label><input class="form-input" placeholder="List the key teams / units / functions this role must work closely with on a regular basis" value="Data, Marketing, Tech, Finance"/></div>
+      <div class="form-group"><label class="form-label">Recruiter</label><input class="form-input" value="Nguyễn Thu Hà" placeholder="Assigned recruiter"/></div>
     </div>
-    <div class="divider"></div>
-    <div class="form-group" style="margin-bottom:12px;">
-      <label class="form-label">Role Type <span class="req">*</span></label>
-      <div style="display:flex;gap:12px;margin-top:6px;">
-        <div class="check-row checked" id="rt-new" onclick="selectRoleType('new')"><div class="check-box"></div><div><div class="check-text">New headcount</div></div></div>
-        <div class="check-row" id="rt-replace" onclick="selectRoleType('replace')"><div class="check-box"></div><div><div class="check-text">Replacement for</div></div></div>
-      </div>
-      <div id="replacement-field" style="display:none;margin-top:10px;">
-        <div style="background:var(--amber-lt);border:1.5px solid var(--amber-mid);border-radius:8px;padding:12px 14px;">
-          <label class="form-label" style="color:var(--amber);">Account of employee being replaced <span class="req">*</span></label>
-          <div style="font-size:10px;color:var(--text-muted);margin-bottom:6px;">Enter company user account — system will auto-resolve role &amp; domain</div>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <span style="font-size:13px;color:var(--text-muted);font-weight:700;">@</span>
-            <input class="form-input" placeholder="e.g. an.do1" style="max-width:200px;font-family:monospace;font-size:13px;"/>
-            <span style="font-size:11px;color:var(--text-muted);">→ resolves: <strong>Do Thi An</strong> · Senior PM · Growth</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Primary Hiring Driver</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
-        <div class="check-row checked" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Business expansion</div></div>
-        <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Team capabilities uplift</div></div>
-        <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Backfill resignation</div></div>
-        <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">New product / new initiative</div></div>
-      </div>
-      <div style="margin-top:10px;">
-        <label class="form-label" style="margin-bottom:5px;display:block;">Other notes <span style="font-size:10px;font-weight:500;color:var(--text-muted);">(optional)</span></label>
-        <textarea class="form-input form-textarea" style="min-height:54px;" placeholder="e.g. Need to expand Public Services aggressively in 2026 to win e-government"></textarea>
-      </div>
+    <div class="form-grid" style="margin-top:10px">
+      <div class="form-group"><label class="form-label">Number of subordinates <span style="color:var(--text-muted);font-weight:400">(if People Manager)</span></label><input class="form-input" placeholder="Specify number of direct reports"/></div>
+      <div class="form-group"><label class="form-label">Cross-functional stakeholders</label><input class="form-input" placeholder="Key teams this role must work closely with" value="Risk, Data, Marketing, Engineering"/></div>
     </div>
   </div>
 </div>
 
 <div class="form-section">
   <div class="form-section-header">
-    <div class="form-section-icon" style="background:var(--amber-lt)">🏗️</div>
-    <div><div class="form-section-title">Section 2 — Team Structural Context</div><div class="form-section-note">What structural context should Recruiter understand when screening candidates?</div></div>
+    <div class="form-section-icon" style="background:var(--blue-lt)">📋</div>
+    <div><div class="form-section-title">Section 2 — Hiring Context</div><div class="form-section-note">Help the recruiter understand the hiring driver and team structure</div></div>
   </div>
   <div class="form-body">
-    ${jobData.roleType !== 'People Manager' ? `
+    <div style="margin-bottom:14px">
+      <label class="form-label" style="margin-bottom:8px">Role Type</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div class="check-row" style="flex:1;min-width:140px" onclick="selectRoleType('new')"><div class="check-box"></div><div><div class="check-text">New headcount</div></div></div>
+        <div class="check-row" id="rt-replace" onclick="selectRoleType('replace')"><div class="check-box"></div><div><div class="check-text">Replacement for:</div><input class="form-input" style="margin-top:4px;font-size:11px" placeholder="Name of person being replaced" onclick="event.stopPropagation()"/></div></div>
+      </div>
+    </div>
+    <div style="margin-bottom:14px">
+      <label class="form-label" style="margin-bottom:8px">Primary hiring driver <span class="req">*</span></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        ${[
+          'Business expansion',
+          'Team capabilities uplift',
+          'Backfill — resignation',
+          'New product or new initiative',
+          'Other'
+        ].map(opt => `<div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text">${opt}</div></div>`).join('')}
+      </div>
+      <input class="form-input" style="margin-top:8px" placeholder="Remarks: additional context on hiring driver..."/>
+    </div>
     <div>
-      <div style="font-size:11px;font-weight:700;color:var(--text-sub);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--brand);">Individual Contributor — Structural Context</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
-        <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">High cross-functional dependency</div></div>
-        <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Ambiguous scope / evolving responsibilities</div></div>
-        <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Independent decision-making with limited supervision</div></div>
-        <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Other, please specify</div></div>
+      <label class="form-label" style="margin-bottom:8px">Team structural context <span style="color:var(--text-muted);font-weight:400">— What should recruiter understand when screening?</span></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        ${[
+          ['ic','High cross-functional dependency'],
+          ['ic','Ambiguous scope / evolving responsibilities'],
+          ['ic','Requires independent decision-making'],
+          ['pm','Leading a newly formed team'],
+          ['pm','Leading an unstable / need-to-transform team'],
+          ['pm','Managing senior / strong ICs'],
+          ['pm','Managing mixed maturity team (junior + senior)'],
+          ['other','Other']
+        ].map(([type, opt]) => `<div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text">${opt}</div></div>`).join('')}
       </div>
-      <label class="form-label" style="margin-bottom:4px;display:block;">Recruiter note:</label>
-      <input class="form-input" placeholder="Additional context..."/>
-    </div>` : `
+      <input class="form-input" style="margin-top:8px" placeholder="Remarks: team context details..."/>
+    </div>
+  </div>
+</div>
+
+<div class="form-section">
+  <div class="form-section-header">
+    <div class="form-section-icon" style="background:var(--green-lt)">🎯</div>
+    <div><div class="form-section-title">Section 3 — Role Success Definition</div><div class="form-section-note">What are the desired outcomes within 6 months?</div></div>
+  </div>
+  <div class="form-body">
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Outcome 1</label><input class="form-input" placeholder="Measurable outcome within 6 months" value="Own and deliver MAU growth target for payment ecosystem — minimum +15% QoQ"/></div>
+      <div class="form-group"><label class="form-label">Outcome 2</label><input class="form-input" placeholder="Second measurable outcome" value="Launch 2+ growth experiments with documented learnings and iteration plan"/></div>
+    </div>
+  </div>
+</div>
+
+<div class="form-section">
+  <div class="form-section-header">
+    <div class="form-section-icon" style="background:#EEF2FF">👤</div>
+    <div><div class="form-section-title">Section 4 — Candidate Persona</div><div class="form-section-note">Profile of the ideal candidate — used to calibrate sourcing and screening</div></div>
+  </div>
+  <div class="form-body">
+    <div class="form-grid" style="margin-bottom:14px">
+      <div class="form-group"><label class="form-label">Education qualification</label><input class="form-input" value="Bachelor / Master — Business, Technology or related"/></div>
+      <div class="form-group"><label class="form-label">Certification</label><input class="form-input" placeholder="If required — else leave blank"/></div>
+      <div class="form-group"><label class="form-label">Industry background</label><input class="form-input" value="Fintech, E-commerce, Super-app"/></div>
+      <div class="form-group"><label class="form-label">Working background</label><input class="form-input" value="Growth, Product Management, Data — at scale"/></div>
+      <div class="form-group"><label class="form-label">Target companies</label><input class="form-input" value="VNPay, ZaloPay, Grab, Shopee, Sea Group"/></div>
+      <div class="form-group"><label class="form-label">Personality</label><input class="form-input" value="Data-driven, autonomous, high-ownership, collaborative"/></div>
+    </div>
+    <div style="margin-bottom:14px">
+      <label class="form-label" style="margin-bottom:8px">Critical Knowledge / Skills for success <span style="color:var(--text-muted);font-weight:400">(3–5 items from Job Request)</span></label>
+      <div style="overflow-x:auto">
+        <table class="comp-table">
+          <tr>
+            <th style="width:25%">Knowledge / Skill</th>
+            <th style="width:35%">What good looks like</th>
+            <th>Example project / behaviour</th>
+          </tr>
+          <tr>
+            <td><input class="form-input" value="Knowledge — Growth mechanics"/></td>
+            <td><input class="form-input" value="Can design and run full-funnel growth experiments independently"/></td>
+            <td><input class="form-input" value="e.g. Led MAU recovery initiative post feature change"/></td>
+          </tr>
+          <tr>
+            <td><input class="form-input" value="Skill 1 — Problem Solving"/></td>
+            <td><input class="form-input" value="Structured breakdown of ambiguous problems into testable hypotheses"/></td>
+            <td><input class="form-input" value="e.g. Reduced churn by diagnosing 3 root causes in 2 weeks"/></td>
+          </tr>
+          <tr>
+            <td><input class="form-input" value="Skill 2 — Analytical Thinking"/></td>
+            <td><input class="form-input" value="SQL-proficient, uses data to prioritize decisions not justify them"/></td>
+            <td><input class="form-input" value="e.g. Self-served weekly growth dashboard in SQL"/></td>
+          </tr>
+          <tr>
+            <td><input class="form-input" value="Skill 3 — Strategic Thinking"/></td>
+            <td><input class="form-input" value="Thinks at system level — connects product decisions to business outcomes"/></td>
+            <td><input class="form-input" value="e.g. Proposed and led cross-team retention strategy"/></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;padding-top:12px;border-top:0.5px solid var(--border)">
+      <label class="form-label" style="margin-bottom:8px">Example of targeted profiles</label>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Profile 1 — CV / LinkedIn link</label><input class="form-input" placeholder="Insert link to example profile"/></div>
+        <div class="form-group"><label class="form-label">Profile 2 — CV / LinkedIn link</label><input class="form-input" placeholder="Insert link to example profile"/></div>
+      </div>
+      <textarea class="form-input form-textarea" style="min-height:52px;margin-top:8px" placeholder="Why? What makes these profiles suitable for this role?"></textarea>
+    </div>
+    <div style="padding-top:12px;border-top:0.5px solid var(--border)">
+      <div onclick="toggleCollapse('intake-redflags-body','intake-redflags-toggle')" style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:6px">
+        <span class="form-label" style="margin-bottom:0">Red flags</span>
+        <span style="font-size:10px;color:var(--text-muted);font-weight:400">— capability or behavioural gaps that typically cause failure in this role</span>
+        <span id="intake-redflags-toggle" style="font-size:10px;color:var(--brand);font-weight:700;margin-left:auto">▶ Add</span>
+      </div>
+      <div id="intake-redflags-body" style="display:none">
+        <textarea class="form-input form-textarea" style="min-height:52px" placeholder="e.g. Candidates who rely on large teams to execute, cannot self-serve data, or need explicit direction before acting">Candidates who rely on large support teams, cannot self-serve data, or need explicit direction before acting. Lack of ownership language in project descriptions.</textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="form-section">
+  <div class="form-section-header">
+    <div class="form-section-icon" style="background:var(--amber-lt)">✨</div>
+    <div><div class="form-section-title">Section 5 — Role Value Proposition</div><div class="form-section-note">What makes this role attractive to strong candidates?</div></div>
+  </div>
+  <div class="form-body">
+    <div style="margin-bottom:14px">
+      <label class="form-label" style="margin-bottom:8px">Role selling points</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px">
+        <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text" style="font-size:11px">Business impact — Build / own strategic product or business line</div></div>
+        <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text" style="font-size:11px">Business impact — Direct impact on key business metrics</div></div>
+        <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text" style="font-size:11px">Leadership exposure — Direct access to senior leadership</div></div>
+        <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text" style="font-size:11px">Learning — On-the-job from peers / stakeholders / LM</div></div>
+        <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text" style="font-size:11px">Other</div></div>
+      </div>
+      <input class="form-input" placeholder="Remarks: what specifically makes this role stand out..."/>
+    </div>
     <div>
-      <div style="font-size:11px;font-weight:700;color:var(--text-sub);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--brand);">People Manager — Team Structural Context</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
-        <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Leading a newly formed team</div></div>
-        <div class="check-row checked" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Leading an unstable / need-to-transform team</div></div>
-        <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Managing senior / strong ICs</div></div>
-        <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Managing mixed maturity team</div></div>
-        <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Other, please specify</div></div>
+      <label class="form-label" style="margin-bottom:6px">Potential development roadmap <span style="color:var(--text-muted);font-weight:400">(directional, not a commitment)</span></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px">
+        <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text" style="font-size:11px">Expand scope</div></div>
+        <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text" style="font-size:11px">Lead a team or a larger team</div></div>
+        <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text" style="font-size:11px">Move to higher job grade</div></div>
+        <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text" style="font-size:11px">Job rotation</div></div>
+        <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text" style="font-size:11px">Other</div></div>
       </div>
-      <label class="form-label" style="margin-bottom:4px;display:block;">Recruiter note:</label>
-      <input class="form-input" placeholder="Additional context..."/>
-    </div>`}
+      <input class="form-input" placeholder="Remarks: development roadmap details..."/>
+    </div>
   </div>
 </div>
 
-
-<!-- SECTION 3 — ROLE SUCCESS DEFINITION -->
 <div class="form-section">
   <div class="form-section-header">
-    <div class="form-section-icon" style="background:#F0FDF4;">🎯</div>
-    <div><div class="form-section-title">Section 3 — Role Success Definition</div><div class="form-section-note">Define what "great" looks like within the first 6 months</div></div>
+    <div class="form-section-icon" style="background:#F0F4FF">🗓️</div>
+    <div><div class="form-section-title">Section 6 — Selection Process Design</div><div class="form-section-note">Define interview rounds and assessments — roles auto-populate from Hiring Alignment</div></div>
   </div>
   <div class="form-body">
-    <div class="form-group">
-      <label class="form-label">What are the desired outcomes within 6 months?</label>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:11px;font-weight:700;color:var(--brand);min-width:68px;">Outcome 1</span>
-          <input class="form-input" style="flex:1;" placeholder="e.g. Fully onboarded and independently leading the Growth squad — shipping weekly experiments" onchange="saveJobField('outcome1',this.value)"/>
+    <div style="margin-bottom:14px">
+      <label class="form-label" style="margin-bottom:8px">Interview process</label>
+      <div style="overflow-x:auto">
+        <table class="comp-table">
+          <tr>
+            <th style="width:20%">Round</th>
+            <th style="width:30%">Interview type</th>
+            <th>Interviewer name(s)</th>
+          </tr>
+          <tr>
+            <td style="font-weight:700">Round 1</td>
+            <td><select class="form-input form-select">
+              <option selected>Interview with Line Manager 1</option>
+              <option>Interview with Line Manager 2</option>
+              <option>Interview with Peers / Stakeholder / HRBP</option>
+              <option>Interview with Head of Department / Head of Division</option>
+            </select></td>
+            <td><input class="form-input" placeholder="Specify name" value="Lương Kim Thanh"/></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700">Round 2</td>
+            <td><select class="form-input form-select">
+              <option>Interview with Line Manager 1</option>
+              <option selected>Interview with Line Manager 2</option>
+              <option>Interview with Peers / Stakeholder / HRBP</option>
+              <option>Interview with Head of Department / Head of Division</option>
+            </select></td>
+            <td><input class="form-input" placeholder="Specify name"/></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700">Round 3</td>
+            <td><select class="form-input form-select">
+              <option>Interview with Line Manager 1</option>
+              <option>Interview with Line Manager 2</option>
+              <option selected>Interview with Peers / Stakeholder / HRBP</option>
+              <option>Interview with Head of Department / Head of Division</option>
+            </select></td>
+            <td><input class="form-input" placeholder="Specify name" value="Đỗ Khắc Cường (HRBP)"/></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700">Round 4</td>
+            <td><select class="form-input form-select">
+              <option>Interview with Line Manager 1</option>
+              <option>Interview with Line Manager 2</option>
+              <option>Interview with Peers / Stakeholder / HRBP</option>
+              <option selected>Interview with Head of Department / Head of Division</option>
+            </select></td>
+            <td><input class="form-input" placeholder="Specify name"/></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Cognitive test</label>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <div class="check-row" style="flex:1" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box checked"></div><div class="check-text">Standard (P60)</div></div>
+          <div class="form-group" style="flex:2;margin:0"><input class="form-input" placeholder="Specific threshold if any"/></div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:11px;font-weight:700;color:var(--brand);min-width:68px;">Outcome 2</span>
-          <input class="form-input" style="flex:1;" placeholder="e.g. Established stakeholder relationships across Risk, Data, and Marketing" onchange="saveJobField('outcome2',this.value)"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Business case</label>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box"></div><div class="check-text">Yes — attach case</div></div>
+          <div class="check-row" onclick="this.querySelector('.check-box').classList.toggle('checked')"><div class="check-box checked"></div><div class="check-text">No</div></div>
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
-
-<div class="form-section">
-  <div class="form-section-header">
-    <div class="form-section-icon" style="background:#EDE9FE">👤</div>
-    <div><div class="form-section-title">Section 4 — Candidate Persona</div><div class="form-section-note">Define the ideal candidate profile to guide sourcing &amp; screening</div></div>
-  </div>
-  <div class="form-body">
-    <div style="font-size:10px;font-weight:800;color:var(--text-sub);text-transform:uppercase;margin-bottom:10px;">Candidate Portrait</div>
-    <table class="comp-table" style="margin-bottom:16px;">
-      <tr><th style="width:28%;">Attribute</th><th>Detail</th></tr>
-      <tr><td style="font-weight:600;">Education qualification</td><td><input class="form-input" value="Bachelor+ in Business, Technology, or related"/></td></tr>
-      <tr><td style="font-weight:600;">Certification</td><td><input class="form-input" placeholder="e.g. PMP, AWS, CFA — or leave blank if not required"/></td></tr>
-      <tr><td style="font-weight:600;">Industry background</td><td>
-        <div class="tag-group">
-          <span class="tag active" onclick="this.classList.toggle('active')">Fintech</span>
-          <span class="tag active" onclick="this.classList.toggle('active')">E-commerce</span>
-          <span class="tag" onclick="this.classList.toggle('active')">SaaS</span>
-          <span class="tag" onclick="this.classList.toggle('active')">Banking</span>
-          <span class="tag" onclick="this.classList.toggle('active')">Consulting</span>
-        </div>
-      </td></tr>
-      <tr><td style="font-weight:600;">Working background</td><td><input class="form-input" placeholder="e.g. Strong IC track record before transitioning to management"/></td></tr>
-      <tr><td style="font-weight:600;">Target companies</td><td><input class="form-input" value="VNPay, ZaloPay, Grab, Shopee, Sea Group"/></td></tr>
-    </table>
-    <div style="font-size:10px;font-weight:800;color:var(--text-sub);text-transform:uppercase;margin-bottom:8px;">Leadership Record</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px;">
-      <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">No leadership required</div></div>
-      <div class="check-row" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Informal leadership (without authority)</div></div>
-      <div class="check-row checked" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Project leadership (no direct reports)</div></div>
-      <div class="check-row checked" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-text">Direct people management</div></div>
-    </div>
-    <div style="font-size:10px;font-weight:800;color:var(--text-sub);text-transform:uppercase;margin-bottom:8px;margin-top:16px;">Critical Competencies <span class="info-pill" style="margin-left:4px;">→ Auto-feed into Interview Forms</span></div>
-    <table class="comp-table" style="margin-bottom:14px;">
-      <tr><th>Competency</th><th>Expected Behavior / Observable Signal</th></tr>
-      <tr><td><input class="form-input" value="Product-led growth thinking"/></td><td><input class="form-input" value="Can design full-funnel experiments independently, cites data from past work"/></td></tr>
-      <tr><td><input class="form-input" value="Data-driven decision making"/></td><td><input class="form-input" value="Uses metrics to prioritize, can explain trade-offs clearly"/></td></tr>
-      <tr><td><input class="form-input" placeholder="Competency 3..."/></td><td><input class="form-input" placeholder="Expected behavior signal..."/></td></tr>
-    </table>
-    <div class="form-group" style="margin-bottom:14px;">
-      <label class="form-label">Failure Risk Indicators <span class="warn-pill" style="margin-left:4px;">Be specific</span></label>
-      <textarea class="form-input form-textarea" style="min-height:54px;" placeholder="e.g. Previous holder failed because...">Overreliance on intuition without data validation. Poor stakeholder communication causing misalignment.</textarea>
-    </div>
-    <div style="font-size:10px;font-weight:800;color:var(--text-sub);text-transform:uppercase;margin-bottom:4px;">Example of Targeted Profiles</div>
-    <div style="font-size:10px;color:var(--text-muted);margin-bottom:8px;font-style:italic;">Describe 1–2 example profiles that would likely succeed in this role</div>
-    <table class="comp-table" style="margin-bottom:10px;">
-      <tr><th style="width:12%;">Profile</th><th>CV / LinkedIn link</th></tr>
-      <tr><td style="font-weight:600;">Profile 1</td><td><input class="form-input" placeholder="Paste CV or LinkedIn URL..."/></td></tr>
-      <tr><td style="font-weight:600;">Profile 2</td><td><input class="form-input" placeholder="Paste CV or LinkedIn URL..."/></td></tr>
-    </table>
-    <div class="form-group">
-      <label class="form-label">Remarks — Why? What makes these profiles suitable for this role?</label>
-      <textarea class="form-input form-textarea" style="min-height:60px;" placeholder="Explain what specific traits, background, or experience make these profiles a strong fit..."></textarea>
-    </div>
-  </div>
-</div>
-
-
-<!-- SECTION 5 — ROLE VALUE PROPOSITION -->
-<div class="form-section">
-  <div class="form-section-header">
-    <div class="form-section-icon" style="background:#FFF7ED;">💎</div>
-    <div><div class="form-section-title">Section 5 — Role Value Proposition</div><div class="form-section-note">What makes this role attractive for strong candidates?</div></div>
-  </div>
-  <div class="form-body">
-    <div class="form-group">
-      <label class="form-label">Role selling points <span style="font-weight:400;color:var(--text-muted);">(select all that apply)</span></label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-top:6px;">
-        <label style="display:flex;align-items:flex-start;gap:7px;font-size:12px;cursor:pointer;padding:6px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);">
-          <input type="checkbox" style="margin-top:2px;accent-color:var(--brand);flex-shrink:0;"/>
-          <span><strong>Business impact</strong><br><span style="font-size:11px;color:var(--text-muted);">Build/own strategic product or direct biz metric impact</span></span>
-        </label>
-        <label style="display:flex;align-items:flex-start;gap:7px;font-size:12px;cursor:pointer;padding:6px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);">
-          <input type="checkbox" style="margin-top:2px;accent-color:var(--brand);flex-shrink:0;"/>
-          <span><strong>Leadership exposure</strong><br><span style="font-size:11px;color:var(--text-muted);">Direct exposure to senior leadership</span></span>
-        </label>
-        <label style="display:flex;align-items:flex-start;gap:7px;font-size:12px;cursor:pointer;padding:6px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);">
-          <input type="checkbox" style="margin-top:2px;accent-color:var(--brand);flex-shrink:0;"/>
-          <span><strong>Learning opportunities</strong><br><span style="font-size:11px;color:var(--text-muted);">On-the-job learning from peers / stakeholders / LM</span></span>
-        </label>
-        <label style="display:flex;align-items:flex-start;gap:7px;font-size:12px;cursor:pointer;padding:6px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);">
-          <input type="checkbox" style="margin-top:2px;accent-color:var(--brand);flex-shrink:0;"/>
-          <span><strong>Other</strong><br><span style="font-size:11px;color:var(--text-muted);">Please specify in Remarks below</span></span>
-        </label>
-      </div>
-      <input class="form-input" style="margin-top:8px;font-size:11px;" placeholder="Remarks — selling point details (optional)"/>
-    </div>
-
-    <div class="form-group" style="margin-top:12px;">
-      <label class="form-label">Potential development roadmap <span style="font-weight:400;color:var(--text-muted);">(directional)</span></label>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px;">
-        <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);"><input type="checkbox" style="accent-color:var(--brand);flex-shrink:0;"/> Expand scope</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);"><input type="checkbox" style="accent-color:var(--brand);flex-shrink:0;"/> Lead larger team</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);"><input type="checkbox" style="accent-color:var(--brand);flex-shrink:0;"/> Higher job grade</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);"><input type="checkbox" style="accent-color:var(--brand);flex-shrink:0;"/> Job rotation</label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--slate-lt);"><input type="checkbox" style="accent-color:var(--brand);flex-shrink:0;"/> Other (see Remarks)</label>
-      </div>
-      <input class="form-input" style="margin-top:8px;font-size:11px;" placeholder="Remarks — development path details (optional)"/>
-    </div>
-  </div>
-</div>
-
-
-<div class="form-section">
-  <div class="form-section-header">
-    <div class="form-section-icon" style="background:var(--green-lt)">📅</div>
-    <div><div class="form-section-title">Section 6 — Interview Plan</div><div class="form-section-note">${gradeToIntakeNote(jobData.grade)}</div></div>
-  </div>
-  <div class="form-body">
-    <table class="comp-table">
-      <tr><th>Round</th><th>Interviewer</th><th>Objective</th></tr>
-      <tr><td><span class="badge badge-new">Round 1</span></td><td>Line Manager</td><td>Technical depth — domain & execution</td></tr>
-      <tr><td><span class="badge badge-new">Round 2</span></td><td>Line Manager 2</td><td>Technical depth — domain & execution</td></tr>
-      <tr><td><span class="badge badge-brand">Round 3</span></td><td>Peer / HRBPM</td><td>Culture & Behavior fit</td></tr>
-      <tr><td><span class="badge badge-brand">Round 4</span></td><td>Division Head</td><td>Strategic thinking & leadership</td></tr>
-    </table>
-  </div>
-</div>
 <div style="padding-bottom:70px;"></div>`; }
-
 function selectRoleType(type) {
   const newEl = document.getElementById('rt-new');
   const replaceEl = document.getElementById('rt-replace');
@@ -3858,8 +3926,8 @@ function pageTechnical_HM() { return `
   <div class="form-section-header">
     <div class="form-section-icon" style="background:#EDE9FE">⚙️</div>
     <div>
-      <div class="form-section-title">1. Technical Competencies Assessment</div>
-      <div class="form-section-note">Rating: 1 = Below requirement | 3 = Meets | 5 = Exceeds · Skills 4 &amp; 5 auto-populated from JD &amp; Hiring Alignment</div>
+      <div class="form-section-title">1. Job Fit Assessment</div>
+      <div class="form-section-note">Rating: 1 = Below | 3 = Meets | 5 = Exceeds · Skills auto-populated from Hiring Alignment</div>
     </div>
     <button id="tech-edit-btn" onclick="toggleTechSkillsEdit()" style="margin-left:auto;background:var(--brand-xl);color:var(--brand);border:1.5px solid var(--brand-lt);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;">✎ Edit skills</button>
   </div>
@@ -3893,16 +3961,18 @@ function pageTechnical_HM() { return `
 <div class="form-section">
   <div class="form-section-header">
     <div class="form-section-icon" style="background:var(--amber-lt)">🔍</div>
-    <div><div class="form-section-title">2. Light Culture &amp; Professional Character Check</div><div class="form-section-note">Brief behavioral observation only if relevant to performance impact.</div></div>
+    <div><div class="form-section-title">2. Culture Fit Assessment</div><div class="form-section-note">Light culture & professional character check — behavioral signals relevant to performance.</div></div>
   </div>
   <div class="form-body">
     <table class="comp-table">
       <tr>
-        <th style="width:26%">Dimension <span style="font-size:9px;font-weight:400;opacity:0.7;">(hover for description)</span></th>
-        <th style="width:110px">LM Rating</th>
+        <th style="width:22%">Dimension <span style="font-size:9px;font-weight:400;opacity:0.7;">(hover for description)</span></th>
+        <th style="width:88px">LM Rating</th>
         <th>LM Evidence</th>
-        <th style="width:110px">ULM Rating</th>
-        <th>ULM Evidence</th>
+        <th style="width:88px">LM2 Rating</th>
+        <th>LM2 Evidence</th>
+        <th style="width:88px">Head Rating</th>
+        <th>Head Evidence</th>
       </tr>
       <tr>
         <td>
@@ -3916,6 +3986,8 @@ function pageTechnical_HM() { return `
         <td><input class="form-input" placeholder="Behavioral observation..."/></td>
         <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
+        <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
+        <td><input class="form-input" placeholder="Head observation..."/></td>
       </tr>
       <tr>
         <td>
@@ -3929,6 +4001,8 @@ function pageTechnical_HM() { return `
         <td><input class="form-input" placeholder="Behavioral observation..."/></td>
         <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
+        <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
+        <td><input class="form-input" placeholder="Head observation..."/></td>
       </tr>
       <tr>
         <td>
@@ -3942,6 +4016,8 @@ function pageTechnical_HM() { return `
         <td><input class="form-input" placeholder="Behavioral observation..."/></td>
         <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
+        <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
+        <td><input class="form-input" placeholder="Head observation..."/></td>
       </tr>
       <tr>
         <td>
@@ -3955,6 +4031,8 @@ function pageTechnical_HM() { return `
         <td><input class="form-input" placeholder="Behavioral observation..."/></td>
         <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
+        <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
+        <td><input class="form-input" placeholder="Head observation..."/></td>
       </tr>
       <tr>
         <td>
@@ -3968,6 +4046,8 @@ function pageTechnical_HM() { return `
         <td><input class="form-input" placeholder="Behavioral observation..."/></td>
         <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
+        <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
+        <td><input class="form-input" placeholder="Head observation..."/></td>
       </tr>
       <tr>
         <td>
@@ -3981,6 +4061,8 @@ function pageTechnical_HM() { return `
         <td><input class="form-input" placeholder="Behavioral observation..."/></td>
         <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
+        <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
+        <td><input class="form-input" placeholder="Head observation..."/></td>
       </tr>
       <tr>
         <td>
@@ -3994,6 +4076,8 @@ function pageTechnical_HM() { return `
         <td><input class="form-input" placeholder="Behavioral observation..."/></td>
         <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
         <td><input class="form-input" placeholder="Evidence..."/></td>
+        <td><div class="star-row" data-val="0">☆☆☆☆☆</div></td>
+        <td><input class="form-input" placeholder="Head observation..."/></td>
       </tr>
       </table>
   </div>
@@ -4025,34 +4109,98 @@ function pageTechnical_HM() { return `
 <div class="form-section">
   <div class="form-section-header">
     <div class="form-section-icon" style="background:var(--green-lt)">✅</div>
-    <div><div class="form-section-title">Section 4 — Final Recommendation</div></div>
+    <div style="flex:1"><div class="form-section-title">Section 4 — Final Recommendation</div>
+    <div class="form-section-note">Complete sections 1–3 above before submitting</div></div>
+    <a href="#" onclick="document.querySelector('.form-section:last-of-type').scrollIntoView({behavior:\'smooth\'});return false" style="font-size:11px;color:var(--brand);font-weight:700;white-space:nowrap">↑ Back to top</a>
   </div>
   <div class="form-body">
-    <div class="rec-options" style="margin-bottom:16px;">
-      <div class="rec-card hire" onclick="selectRecTI(this,'hire')">
-        <div class="rec-icon">✅</div>
-        <div class="rec-label">Hire</div>
-        <div class="rec-sub">No material concern</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px;align-items:start">
+
+      <!-- LEFT: Hiring Recommendation -->
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Hiring Recommendation</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+
+          <label onclick="selectRecTI2(this,'hire')" class="rec-ti-row" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s">
+            <div class="rec-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid #639922;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--text-main)">Hire</div>
+              <div style="font-size:10px;color:var(--text-muted)">No material concern</div>
+            </div>
+          </label>
+
+          <label onclick="selectRecTI2(this,'aware')" class="rec-ti-row selected-ti" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border:1.5px solid var(--brand);border-radius:10px;cursor:pointer;background:var(--brand-xl);transition:all .15s">
+            <div class="rec-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--amber);flex-shrink:0;background:var(--amber);display:flex;align-items:center;justify-content:center"><div style="width:7px;height:7px;border-radius:50%;background:white"></div></div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--text-main)">Hire — With Awareness</div>
+              <div style="font-size:10px;color:var(--text-muted)">Manageable concerns</div>
+            </div>
+          </label>
+
+          <label onclick="selectRecTI2(this,'lower')" class="rec-ti-row" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s">
+            <div class="rec-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0"></div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--text-main)">Hire — Lower level</div>
+              <div style="font-size:10px;color:var(--text-muted)">Strong but below target grade</div>
+            </div>
+          </label>
+
+          <label onclick="selectRecTI2(this,'higher')" class="rec-ti-row" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s">
+            <div class="rec-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0"></div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--text-main)">Hire — Higher level</div>
+              <div style="font-size:10px;color:var(--text-muted)">Exceeds current role scope</div>
+            </div>
+          </label>
+
+          <label onclick="selectRecTI2(this,'nohire')" class="rec-ti-row" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s">
+            <div class="rec-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--red);flex-shrink:0"></div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--text-main)">No Hire</div>
+              <div style="font-size:10px;color:var(--text-muted)">Material concern</div>
+            </div>
+          </label>
+
+        </div>
       </div>
-      <div class="rec-card aware selected" onclick="selectRecTI(this,'aware')">
-        <div class="rec-icon">⚡</div>
-        <div class="rec-label">Hire — With Awareness</div>
-        <div class="rec-sub">Manageable concerns</div>
+
+      <!-- RIGHT: Candidate level -->
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Candidate is currently</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+
+          <label onclick="selectCandLevel2(this)" class="cand-level-row" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s">
+            <div class="cl-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0"></div>
+            <span style="font-size:12px;font-weight:700;color:var(--text-main)">Under target level</span>
+          </label>
+          <label onclick="selectCandLevel2(this)" class="cand-level-row" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s">
+            <div class="cl-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0"></div>
+            <span style="font-size:12px;font-weight:700;color:var(--text-main)">Developing at target level</span>
+          </label>
+          <label onclick="selectCandLevel2(this)" class="cand-level-row selected-cl" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border:1.5px solid #888;border-radius:10px;cursor:pointer;background:var(--slate-lt);transition:all .15s">
+            <div class="cl-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid #888;flex-shrink:0;background:#888;display:flex;align-items:center;justify-content:center"><div style="width:7px;height:7px;border-radius:50%;background:white"></div></div>
+            <span style="font-size:12px;font-weight:700;color:var(--text-main)">Solid at target level</span>
+          </label>
+          <label onclick="selectCandLevel2(this)" class="cand-level-row" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s">
+            <div class="cl-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0"></div>
+            <span style="font-size:12px;font-weight:700;color:var(--text-main)">Strong at target level</span>
+          </label>
+          <label onclick="selectCandLevel2(this)" class="cand-level-row" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s">
+            <div class="cl-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0"></div>
+            <span style="font-size:12px;font-weight:700;color:var(--text-main)">Above target level</span>
+          </label>
+
+        </div>
       </div>
-      <div class="rec-card nohire" onclick="selectRecTI(this,'nohire')">
-        <div class="rec-icon">❌</div>
-        <div class="rec-label">No Hire</div>
-        <div class="rec-sub">Material concern</div>
-      </div>
+
     </div>
-    <div id="ti-candidate-level" style="display:flex;gap:10px;align-items:center;margin-bottom:16px;">
-      <span style="font-size:11px;font-weight:700;color:var(--text-sub);">Candidate is currently:</span>
-      <select class="form-input form-select" style="width:auto"><option>Developing at target level</option><option selected>Solid at target level</option><option>Strong at target level</option><option>Operating above target level</option></select>
+
+    <div style="padding-top:14px;border-top:0.5px solid var(--border)">
+      <div style="font-size:11px;font-weight:700;color:var(--text-sub);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Overall Comment</div>
+      <textarea class="form-input form-textarea" style="min-height:90px" placeholder="Summarize overall assessment — strengths, areas to watch, recommendations for next round.">Strong technical foundation with good strategic instincts. Execution pace needs monitoring — recommend awareness note for onboarding manager.</textarea>
     </div>
-    <div style="margin-top:16px;">
-      <div style="font-size:11px;font-weight:800;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Overall Comment</div>
-      <textarea class="form-input form-textarea" style="min-height:90px;" value="Strong candidate — domain knowledge and product execution depth are well above baseline for G6. Led MAU growth at Shopee with direct cross-functional ownership, scope closely mirrors this role. Key watch points: (1) resilience under setbacks needs further validation in Round 2, (2) ULM to probe strategic thinking at division level. Overall recommendation: Proceed to Round 2 with ULM." placeholder="Summarize overall assessment — strengths, areas to watch, recommendations for next round.&#10;&#10;E.g. Strong technical foundation with good strategic instincts. Execution pace needs monitoring — recommend awareness note for onboarding manager.">Strong technical foundation with good strategic instincts. Execution pace needs monitoring — recommend awareness note for onboarding manager.</textarea>
-    </div>
+
   </div>
 </div>
 
@@ -4080,7 +4228,7 @@ var CULTURE_DIMS = [
 ];
 
 var JOB_FIT_DIMS = [
-  { name:'Role credibility', tip:'Does their communication — vocabulary, judgment calls, and examples — reflect someone already operating at the level this role requires?' },
+  { name:'Capability credibility', tip:'Does their communication — vocabulary, judgment calls, and examples — reflect someone already operating at the level this role requires?' },
 ];
 
 function renderCultureInterviewRows() {
@@ -4522,7 +4670,7 @@ function pageRefCheck_HRTA() { return `
 <div class="form-section">
   <div class="form-section-header">
     <div class="form-section-icon" style="background:var(--brand-xl)">✔️</div>
-    <div><div class="form-section-title">Section 1 — Verification</div><div class="form-section-note">Referee #1</div></div>
+    <div><div class="form-section-title">Section 1 — Verification</div><div class="form-section-note">Q1–3 · Referee should be a direct manager where feasible · Peer or cross-functional stakeholder otherwise</div></div>
   </div>
   <div class="form-body">
     <div class="form-grid">
@@ -4813,12 +4961,27 @@ function pageOffer_HRTA() { return `
   </div>
 </div>
 
-<!-- SECTION III: INTERNAL -->
-<div class="form-section">
-  <div class="form-section-header">
-    <div class="form-section-icon" style="background:#EDE9FE">📊</div>
-    <div><div class="form-section-title">Section III — Internal Comparison</div></div>
+<!-- OFFER QUICK SUMMARY -->
+<div style="display:flex;align-items:center;justify-content:space-between;background:var(--brand-xl);border:1.5px solid var(--brand-lt);border-radius:12px;padding:12px 18px;margin-bottom:4px">
+  <div>
+    <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">Proposed total compensation</div>
+    <div style="font-size:22px;font-weight:900;color:var(--brand)">535,000,000 <span style="font-size:13px;font-weight:400;color:var(--text-muted)">VND / year est.</span></div>
   </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn-secondary" onclick="showOfferPreview()" style="font-size:12px">👁 Preview offer letter</button>
+    <button class="btn-primary" onclick="showApprovalFlow()" style="font-size:12px">📤 Send for approval</button>
+  </div>
+</div>
+
+<!-- SECTION III: INTERNAL (collapsible) -->
+<div class="form-section">
+  <div class="form-section-header" onclick="toggleCollapse('offer-sec3-body','offer-sec3-toggle')" style="cursor:pointer">
+    <div class="form-section-icon" style="background:#EDE9FE">📊</div>
+    <div style="flex:1"><div class="form-section-title">Section III — Internal Comparison</div>
+    <div class="form-section-note">Peer benchmarks · click to expand</div></div>
+    <span id="offer-sec3-toggle" style="font-size:10px;color:var(--text-muted);white-space:nowrap;margin-left:8px">▶ Expand</span>
+  </div>
+  <div id="offer-sec3-body" style="display:none">
   <div class="form-body">
     <table class="offer-table">
       <tr><th>Reference Point</th><th>Monthly Base</th><th>Annual Fixed</th><th>Vs Proposed</th></tr>
@@ -4832,14 +4995,18 @@ function pageOffer_HRTA() { return `
       </tr>
     </table>
   </div>
+  </div><!-- /collapse -->
 </div>
 
-<!-- SECTION IV: EXTERNAL -->
+<!-- SECTION IV: EXTERNAL (collapsible) -->
 <div class="form-section">
-  <div class="form-section-header">
+  <div class="form-section-header" onclick="toggleCollapse('offer-sec4-body','offer-sec4-toggle')" style="cursor:pointer">
     <div class="form-section-icon" style="background:var(--blue-lt)">🌐</div>
-    <div><div class="form-section-title">Section IV — External Market Comparison</div><div class="form-section-note">Benchmark vs market data · Source: Mercer / Radford / Internal survey</div></div>
+    <div style="flex:1"><div class="form-section-title">Section IV — External Market Comparison</div>
+    <div class="form-section-note">Mercer / Radford benchmarks · click to expand</div></div>
+    <span id="offer-sec4-toggle" style="font-size:10px;color:var(--text-muted);white-space:nowrap;margin-left:8px">▶ Expand</span>
   </div>
+  <div id="offer-sec4-body" style="display:none">
   <div class="form-body">
     <table class="offer-table">
       <tr><th>Market Benchmark</th><th>P25</th><th>P50 (Median)</th><th>P75</th><th>Proposed vs P50</th></tr>
@@ -4869,6 +5036,7 @@ function pageOffer_HRTA() { return `
       📌 Source: <input class="form-input" value="Mercer 2025 Vietnam Tech Survey" style="width:260px;display:inline-block;padding:4px 8px;vertical-align:middle;"/>
     </div>
   </div>
+  </div><!-- /collapse -->
 </div>
 
 <!-- SECTION V: HRBP & APPROVAL -->
@@ -5185,127 +5353,282 @@ function pageProbation_HM() { return `
 <!-- ── PHASE 3: LM REVIEW ── -->
 <div id="prob-phase-2" style="display:none;">
 
-<div class="risk-thread">
-  <div class="risk-thread-header">
-    <span class="risk-thread-icon">⚠️</span>
-    <div>
-      <div class="risk-thread-title">🔗 Hiring Risks to Validate — Auto-pulled from Interview Assessment</div>
-      <div class="risk-thread-sub">Validate whether risk flags from interview have materialized in practice</div>
-    </div>
-  </div>
-  <div class="risk-item mid">
-    <div style="flex:1"><div class="risk-item-label">Technical Interview · MID</div><div class="risk-item-text">Execution pace concern — Appeared slow to decide under time pressure in case study</div><div class="risk-item-source">Flagged by: LM2 | Round 2 | 15/03/2026</div></div>
-    <div class="risk-validate">
-      <button class="risk-btn yes" onclick="selectRiskBtn(this)">✓ Did not occur</button>
-      <button class="risk-btn partial active" onclick="selectRiskBtn(this)">⚡ Partially</button>
-      <button class="risk-btn no" onclick="selectRiskBtn(this)">✗ Occurred</button>
-    </div>
-  </div>
-  <div class="risk-item mid">
-    <div style="flex:1"><div class="risk-item-label">Culture Interview · MID</div><div class="risk-item-text">Uncertainty around navigating peer conflict</div><div class="risk-item-source">Flagged by: HRBP | Round 3 | 18/03/2026</div></div>
-    <div class="risk-validate">
-      <button class="risk-btn yes" onclick="selectRiskBtn(this)">✓ Did not occur</button>
-      <button class="risk-btn partial" onclick="selectRiskBtn(this)">⚡ Partially</button>
-      <button class="risk-btn no" onclick="selectRiskBtn(this)">✗ Occurred</button>
-    </div>
-  </div>
-</div>
 
 <div class="form-section">
   <div class="form-section-header">
     <div class="form-section-icon" style="background:var(--blue-lt)">📊</div>
-    <div><div class="form-section-title">LM Review — Delivery & Performance</div><div class="form-section-note">LM rates based on employee self-evaluation · Goals are editable if context has changed</div></div>
+    <div>
+      <div class="form-section-title">1. Delivery & Performance</div>
+      <div class="form-section-note">Evaluate actual outcomes against probation objectives set in Phase 1 · Rating: 1 = Below requirement | 3 = Meets | 5 = Exceeds</div>
+    </div>
   </div>
-  <div class="form-body">
-    <table class="comp-table">
+  <div class="form-body" style="padding:0;overflow-x:auto">
+    <table class="comp-table" style="min-width:700px">
       <tr>
-        <th style="width:20%">Goal</th>
-        <th style="width:22%">Expected Outcome</th>
-        <th style="width:25%">Self Evaluation <span style="font-weight:500;color:rgba(255,255,255,0.7);">← from employee</span></th>
-        <th style="width:80px;">Self Rating</th>
-        <th style="width:80px;">LM Rating</th>
-        <th>LM Comment</th>
+        <th style="width:22%">Probation Objective</th>
+        <th style="width:24%">Expected Outcome</th>
+        <th style="width:22%">Actual Result <span style="font-weight:400;font-size:10px;color:var(--text-muted)">(from self-eval)</span></th>
+        <th style="width:70px">Rating</th>
+        <th>Justification / Evidence</th>
       </tr>
       <tr>
-        <td>
-          <div class="comp-name">Own and deliver core growth KPIs</div>
-          <div style="margin-top:4px;"><input class="form-input" value="Month 3" style="width:80px;font-size:10px;padding:3px 6px;" title="Editable milestone"/></div>
-        </td>
-        <td><div class="comp-desc">DAU +15%, payment frequency +20%</div></td>
-        <td><div class="comp-desc" style="font-style:italic;color:var(--blue);">DAU +11%, payment frequency +17%. Below target but trending positively.</div></td>
-        <td><div style="text-align:center;font-weight:800;color:var(--text-muted);">★★★☆☆<br/><span style="font-size:10px;">Self: 3/5</span></div></td>
+        <td style="font-weight:600;font-size:11px">Own and deliver core growth KPIs</td>
+        <td style="font-size:11px;color:var(--text-sub)">DAU +15%, payment frequency +20%</td>
+        <td><input class="form-input" placeholder="Employee filled..." value="DAU +13% — slightly below target; payment frequency +22% exceeded"/></td>
         <td><div class="star-row" data-val="3">★★★☆☆</div></td>
-        <td><input class="form-input" value="Agree with self-eval. Gap due to market seasonality — acceptable given Q1 context. Need to push harder in Q2."/></td>
+        <td><input class="form-input" placeholder="LM evidence and context..."/></td>
       </tr>
       <tr>
-        <td>
-          <div class="comp-name">Build and stabilize Growth Squad</div>
-          <div style="margin-top:4px;"><input class="form-input" value="Month 6" style="width:80px;font-size:10px;padding:3px 6px;" title="Editable milestone"/></div>
-        </td>
-        <td><div class="comp-desc">3–5 members hired, OKRs defined & tracked</div></td>
-        <td><div class="comp-desc" style="font-style:italic;color:var(--blue);">3 people hired and onboarded. OKRs defined but tracking still inconsistent.</div></td>
-        <td><div style="text-align:center;font-weight:800;color:var(--text-muted);">★★★☆☆<br/><span style="font-size:10px;">Self: 3/5</span></div></td>
-        <td><div class="star-row" data-val="3">★★★☆☆</div></td>
-        <td><input class="form-input" value="Hiring pace slower than planned. OKR execution needs improvement — this is the key focus for Q2."/></td>
+        <td style="font-weight:600;font-size:11px">Build and stabilize Growth Squad</td>
+        <td style="font-size:11px;color:var(--text-sub)">3–5 members, clear OKRs</td>
+        <td><input class="form-input" placeholder="Employee filled..." value="4 members onboarded, OKRs set but 1 member still ramping"/></td>
+        <td><div class="star-row" data-val="4">★★★★☆</div></td>
+        <td><input class="form-input" placeholder="LM evidence and context..."/></td>
+      </tr>
+      <tr>
+        <td style="font-weight:600;font-size:11px">Launch 2 growth experiments</td>
+        <td style="font-size:11px;color:var(--text-sub)">Documented learnings + iteration plan</td>
+        <td><input class="form-input" placeholder="Employee filled..." value="3 experiments launched — 1 scaled, 2 iterated with clear learnings"/></td>
+        <td><div class="star-row" data-val="5">★★★★★</div></td>
+        <td><input class="form-input" placeholder="LM evidence and context..."/></td>
       </tr>
     </table>
   </div>
 </div>
 
+<!-- SECTION 2: CULTURE, BEHAVIOR & PROFESSIONAL CHARACTER -->
 <div class="form-section">
-  <div class="form-section-header">
-    <div class="form-section-icon" style="background:#EDE9FE">🌟</div>
-    <div><div class="form-section-title">LM Review — Behavior & Character</div><div class="form-section-note">Direct comparison with employee self-rating</div></div>
+  <div class="form-section-header" onclick="toggleCollapse('prob-culture-body','prob-culture-toggle')" style="cursor:pointer">
+    <div class="form-section-icon" style="background:var(--brand-xl)">🌟</div>
+    <div style="flex:1">
+      <div class="form-section-title">2. Culture, Behavior & Professional Character</div>
+      <div class="form-section-note">Brief behavioral observation — only if relevant to performance impact · Rating: 1–5</div>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;margin-left:8px">
+      <span id="prob-culture-toggle" style="font-size:10px">▼ Collapse</span>
+    </div>
   </div>
-  <div class="form-body">
+  <div id="prob-culture-body" style="display:block">
+  <div class="form-body" style="padding:0;overflow-x:auto">
     <table class="comp-table">
-      <tr><th>Behavior & Character</th><th>Self Rating</th><th>LM Rating</th><th>LM Comment</th></tr>
-      <tr><td><div class="comp-name">Accountability & Ownership</div></td><td><div style="font-size:12px;color:var(--text-muted);font-weight:700;">★★★★☆ (4)</div></td><td><div class="star-row" data-val="4">★★★★☆</div></td><td><input class="form-input" placeholder="LM comment..."/></td></tr>
-      <tr><td><div class="comp-name">Execution Discipline</div></td><td><div style="font-size:12px;color:var(--text-muted);font-weight:700;">★★★☆☆ (3)</div></td><td><div class="star-row" data-val="3">★★★☆☆</div></td><td><input class="form-input" value="Agree. Occasional delays on lower-priority tasks — needs stronger prioritization discipline."/></td></tr>
-      <tr><td><div class="comp-name">Learning & Adaptability</div></td><td><div style="font-size:12px;color:var(--text-muted);font-weight:700;">★★★★★ (5)</div></td><td><div class="star-row" data-val="5">★★★★★</div></td><td><input class="form-input" value="Excellent — standout quality during probation. Implements feedback very quickly."/></td></tr>
-      <tr><td><div class="comp-name">Collaboration Style</div></td><td><div style="font-size:12px;color:var(--text-muted);font-weight:700;">★★★★☆ (4)</div></td><td><div class="star-row" data-val="4">★★★★☆</div></td><td><input class="form-input" placeholder="LM comment..."/></td></tr>
-      <tr><td><div class="comp-name">Professional Character & Maturity</div></td><td><div style="font-size:12px;color:var(--text-muted);font-weight:700;">★★★★☆ (4)</div></td><td><div class="star-row" data-val="4">★★★★☆</div></td><td><input class="form-input" placeholder="LM comment..."/></td></tr>
+      <tr>
+        <th style="width:24%">Dimension</th>
+        <th style="width:60%">Description</th>
+        <th style="width:80px">LM Rating</th>
+        <th>LM Evidence</th>
+      </tr>
+      <tr><td style="font-weight:600;font-size:11px">Customer Centricity</td><td style="font-size:10px;color:var(--text-sub);line-height:1.5">Starts from who relies on their work; anticipates needs and removes friction end-to-end</td><td><div class="star-row" data-val="4">★★★★☆</div></td><td><input class="form-input" placeholder="Behavioral observation (leave blank if no signal)..."/></td></tr>
+      <tr><td style="font-weight:600;font-size:11px">Teamwork</td><td style="font-size:10px;color:var(--text-sub);line-height:1.5">Puts mission above self; challenges then aligns; delivers on commitments to others</td><td><div class="star-row" data-val="4">★★★★☆</div></td><td><input class="form-input" placeholder="Behavioral observation (leave blank if no signal)..."/></td></tr>
+      <tr><td style="font-weight:600;font-size:11px">Excellence in Execution</td><td style="font-size:10px;color:var(--text-sub);line-height:1.5">Takes full ownership from plan to outcome; accountable for results not just activity</td><td><div class="star-row" data-val="4">★★★★☆</div></td><td><input class="form-input" placeholder="Behavioral observation (leave blank if no signal)..."/></td></tr>
+      <tr><td style="font-weight:600;font-size:11px">Constant Learning</td><td style="font-size:10px;color:var(--text-sub);line-height:1.5">Extracts lessons, applies knowledge across domains, replicates what works</td><td><div class="star-row" data-val="4">★★★★☆</div></td><td><input class="form-input" placeholder="Behavioral observation (leave blank if no signal)..."/></td></tr>
+      <tr><td style="font-weight:600;font-size:11px">Innovation</td><td style="font-size:10px;color:var(--text-sub);line-height:1.5">Creates value by combining existing assets in new ways; pilots quickly and scales with evidence</td><td><div class="star-row" data-val="4">★★★★☆</div></td><td><input class="form-input" placeholder="Behavioral observation (leave blank if no signal)..."/></td></tr>
+      <tr><td style="font-weight:600;font-size:11px">Professional Character &amp; Maturity</td><td style="font-size:10px;color:var(--text-sub);line-height:1.5">Maintains composure under pressure; acts on feedback; navigates ambiguity honestly</td><td><div class="star-row" data-val="4">★★★★☆</div></td><td><input class="form-input" placeholder="Behavioral observation (leave blank if no signal)..."/></td></tr>
+      <tr><td style="font-weight:600;font-size:11px">Motivation &amp; Org Alignment</td><td style="font-size:10px;color:var(--text-sub);line-height:1.5">Intentional career move; understands MoMo context; clarity on role and long-term fit</td><td><div class="star-row" data-val="4">★★★★☆</div></td><td><input class="form-input" placeholder="Behavioral observation (leave blank if no signal)..."/></td></tr>
     </table>
   </div>
+  </div><!-- end collapse body -->
 </div>
 
+<!-- SECTION 3: HIRING RISK VALIDATION (merged with auto-pulled risks) -->
 <div class="form-section">
   <div class="form-section-header">
-    <div class="form-section-icon" style="background:var(--green-lt)">🏁</div>
-    <div><div class="form-section-title">Overall Assessment & Final Decision</div></div>
+    <div class="form-section-icon" style="background:var(--amber-lt)">🔍</div>
+    <div>
+      <div class="form-section-title">3. Hiring Risk Validation</div>
+      <div class="form-section-note">Revisit concerns flagged during interviews · Validate or dismiss · Add new risks observed during probation</div>
+    </div>
   </div>
   <div class="form-body">
-    <div style="display:flex;gap:12px;margin-bottom:20px;">
-      <div style="flex:1;background:var(--brand-xl);border-radius:8px;padding:12px;text-align:center"><div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase">Delivery & Performance</div><div style="font-size:28px;font-weight:900;color:var(--brand)">3.0</div><div style="font-size:10px;color:var(--text-muted)">LM avg / 5</div></div>
-      <div style="flex:1;background:#EDE9FE;border-radius:8px;padding:12px;text-align:center"><div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase">Behavior & Character</div><div style="font-size:28px;font-weight:900;color:#5B21B6">4.0</div><div style="font-size:10px;color:var(--text-muted)">LM avg / 5</div></div>
+
+    <!-- Auto-pulled hiring flags -->
+    <div style="background:var(--amber-lt);border:1px solid #FAC775;border-radius:8px;padding:12px 14px;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;color:#633806;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">
+        🔗 Auto-pulled from Interview Assessment — validate each below
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px" id="prob-risk-flags">
+        <div style="display:flex;align-items:center;gap:10px;background:white;border-radius:6px;padding:8px 12px">
+          <div style="flex:1">
+            <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px">Technical Interview · MID</div>
+            <div style="font-size:12px;font-weight:600;color:var(--text-main);margin-top:2px">Execution pace concern — slow to decide under time pressure</div>
+          </div>
+          <select class="form-input form-select" style="width:160px;font-size:11px" onchange="probFlagUpdate(this)">
+            <option value="">— Validate —</option>
+            <option>Did not materialize ✓</option>
+            <option>Manageable — monitoring</option>
+            <option>Impacting performance ⚠</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:white;border-radius:6px;padding:8px 12px">
+          <div style="flex:1">
+            <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px">Culture Interview · MID</div>
+            <div style="font-size:12px;font-weight:600;color:var(--text-main);margin-top:2px">Uncertainty around navigating peer conflict</div>
+          </div>
+          <select class="form-input form-select" style="width:160px;font-size:11px" onchange="probFlagUpdate(this)">
+            <option value="">— Validate —</option>
+            <option>Did not materialize ✓</option>
+            <option>Manageable — monitoring</option>
+            <option>Impacting performance ⚠</option>
+          </select>
+        </div>
+      </div>
     </div>
-    <div class="divider"></div>
-    <div style="font-size:11px;font-weight:800;color:var(--text-sub);text-transform:uppercase;margin-bottom:10px;">Employment Status</div>
-    <div class="decision-grid" style="margin-bottom:16px;">
-      <div class="decision-card selected" onclick="selectDec(this)"><div class="dc-title">✅ Confirm & continue contract</div></div>
-      <div class="decision-card" onclick="selectDec(this)"><div class="dc-title">📋 Confirm with development plan</div></div>
-      <div class="decision-card" onclick="selectDec(this)"><div class="dc-title">⏳ Extend probation</div></div>
-      <div class="decision-card" onclick="selectDec(this)"><div class="dc-title">❌ Not continue employment</div></div>
+
+    <!-- No concern toggle -->
+    <div style="margin-bottom:12px">
+      <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:12px">
+        <input type="checkbox" id="no-risk-check" onchange="document.getElementById('risk-rows-prob').style.display=this.checked?'none':'block'" style="width:14px;height:14px"/>
+        No additional risks observed — hiring flags resolved
+      </label>
     </div>
-    <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;">
-      <span style="font-size:11px;font-weight:700;color:var(--text-sub);">Job Level:</span>
-      <select class="form-input form-select" style="width:auto"><option>Developing at target level</option><option selected>Solid at target level</option><option>Strong at target level</option></select>
+
+    <!-- Editable risk table -->
+    <div id="risk-rows-prob">
+      <div style="overflow-x:auto">
+        <table class="comp-table" style="min-width:640px" id="prob-risk-table">
+          <tr>
+            <th style="width:22%">Risk / Concern</th>
+            <th style="width:11%">Type</th>
+            <th style="width:9%">Impact</th>
+            <th style="width:28%">Description / Evidence</th>
+            <th>Mitigation / Action Plan</th>
+            <th style="width:36px"></th>
+          </tr>
+          <tr id="prob-risk-row-1">
+            <td><input class="form-input" value="Execution pace under pressure"/></td>
+            <td><select class="form-input form-select" style="font-size:11px"><option>Hiring risk</option><option>New risk</option></select></td>
+            <td><select class="form-input form-select" style="font-size:11px"><option>HIGH</option><option selected>MID</option><option>LOW</option></select></td>
+            <td><input class="form-input" placeholder="Observable evidence..."/></td>
+            <td><input class="form-input" placeholder="Action plan..."/></td>
+            <td><button onclick="this.closest('tr').remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:2px 4px" title="Remove">×</button></td>
+          </tr>
+        </table>
+      </div>
+      <button onclick="probAddRiskRow()" class="btn-ghost" style="font-size:11px;margin-top:8px">+ Add risk / concern</button>
     </div>
-    <div class="divider"></div>
-    <div style="font-size:11px;font-weight:800;color:var(--text-sub);text-transform:uppercase;margin-bottom:10px;">🎯 Hiring Quality Review — Feeds back to TA metrics</div>
-    <div class="hq-options" style="margin-bottom:16px;">
-      <div class="hq-card good selected" onclick="selectHQ(this)"><div class="hq-icon">⭐</div><div class="hq-label" style="color:var(--green)">Good Hire</div><div class="hq-sub">Exceeds/meets expectations</div></div>
-      <div class="hq-card ok" onclick="selectHQ(this)"><div class="hq-icon">✔️</div><div class="hq-label" style="color:var(--amber)">Acceptable Hire</div><div class="hq-sub">Meets with dev needs</div></div>
-      <div class="hq-card mis" onclick="selectHQ(this)"><div class="hq-icon">⚠️</div><div class="hq-label" style="color:#C62828">Mis-Hire</div><div class="hq-sub">Did not meet expectations</div></div>
+  </div>
+</div>
+
+<!-- SECTION 1: DELIVERY & PERFORMANCE -->
+
+<!-- SECTION 4: OVERALL ASSESSMENT & FINAL DECISION -->
+<div class="form-section">
+  <div class="form-section-header">
+    <div class="form-section-icon" style="background:#F0F0FF">🏁</div>
+    <div><div class="form-section-title">4. Overall Assessment & Final Decision</div></div>
+  </div>
+  <div class="form-body">
+
+    <!-- Avg scores -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div style="background:var(--brand-xl);border-radius:8px;padding:14px 16px">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px">Delivery & Performance</div>
+        <div style="font-size:28px;font-weight:900;color:var(--brand);line-height:1">3.8<span style="font-size:13px;font-weight:400;color:var(--text-muted)"> / 5</span></div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:4px">LM avg across 3 objectives</div>
+      </div>
+      <div style="background:#EDE9FE;border-radius:8px;padding:14px 16px">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px">Behavior & Character</div>
+        <div style="font-size:28px;font-weight:900;color:#5B21B6;line-height:1">4.1<span style="font-size:13px;font-weight:400;color:var(--text-muted)"> / 5</span></div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:4px">LM avg across 7 dimensions</div>
+      </div>
     </div>
-    <div class="divider"></div>
-    <div style="font-size:11px;font-weight:800;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Overall Comment</div>
-    <textarea class="form-input form-textarea" style="min-height:90px;" placeholder="Summarize overall assessment — strengths, areas to watch, development plan going forward.">Van A has demonstrated solid potential and strong culture alignment during probation. KPI delivery slightly behind target but trajectory is positive. Execution discipline has improved since interview. Recommend confirm with a 90-day development plan focused on decision-making speed and team OKR execution.</textarea>
+
+    <!-- 3-column decision grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Employment Status</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label onclick="selectProbDecision(this,'status')" class="prob-dec-row prob-status" style="display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border:1.5px solid var(--green);border-radius:8px;cursor:pointer;background:var(--green-lt);transition:border-color .12s,background .12s">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--green);flex-shrink:0;margin-top:2px;background:var(--green);display:flex;align-items:center;justify-content:center"><div style="width:5px;height:5px;border-radius:50%;background:white"></div></div>
+            <span style="font-size:11px;font-weight:600;color:var(--text-main)">Confirm and continue contract</span>
+          </label>
+          <label onclick="selectProbDecision(this,'status')" class="prob-dec-row prob-status" style="display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .12s,background .12s">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px"></div>
+            <span style="font-size:11px;font-weight:600;color:var(--text-main)">Confirm with development plan</span>
+          </label>
+          <label onclick="selectProbDecision(this,'status')" class="prob-dec-row prob-status" style="display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .12s,background .12s">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px"></div>
+            <span style="font-size:11px;font-weight:600;color:var(--text-main)">Extend probation</span>
+          </label>
+          <label onclick="selectProbDecision(this,'status')" class="prob-dec-row prob-status" style="display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .12s,background .12s">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px"></div>
+            <span style="font-size:11px;font-weight:600;color:var(--text-main)">Not continue employment</span>
+          </label>
+          <label onclick="selectProbDecision(this,'status')" class="prob-dec-row prob-status" style="display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .12s,background .12s">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px"></div>
+            <span style="font-size:11px;font-weight:600;color:var(--text-main)">Others (internal move, level adjustment, etc.)</span>
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Job Level</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <label onclick="selectProbDecision(this,'level')" class="prob-dec-row prob-level" style="display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .12s,background .12s">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px"></div>
+            <span style="font-size:11px;font-weight:600;color:var(--text-main)">Developing at target level</span>
+          </label>
+          <label onclick="selectProbDecision(this,'level')" class="prob-dec-row prob-level" style="display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .12s,background .12s">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px"></div>
+            <span style="font-size:11px;font-weight:600;color:var(--text-main)">Solid at target level</span>
+          </label>
+          <label onclick="selectProbDecision(this,'level')" class="prob-dec-row prob-level" style="display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .12s,background .12s">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px"></div>
+            <span style="font-size:11px;font-weight:600;color:var(--text-main)">Strong at target level</span>
+          </label>
+          <label onclick="selectProbDecision(this,'level')" class="prob-dec-row prob-level" style="display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .12s,background .12s">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px"></div>
+            <span style="font-size:11px;font-weight:600;color:var(--text-main)">Above target level</span>
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Hiring Quality Review</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div class="hq-card good" onclick="selectHQ(this)" style="padding:12px 14px;border-radius:8px;border:1.5px solid var(--green);background:var(--green-lt);cursor:pointer">
+            <div style="font-size:14px;margin-bottom:3px">⭐</div>
+            <div style="font-size:11px;font-weight:700;color:var(--green)">Good Hire</div>
+            <div style="font-size:10px;color:var(--text-muted)">Exceeds / meets expectations</div>
+          </div>
+          <div class="hq-card ok" onclick="selectHQ(this)" style="padding:12px 14px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer">
+            <div style="font-size:14px;margin-bottom:3px">✔️</div>
+            <div style="font-size:11px;font-weight:700;color:var(--amber)">Acceptable Hire</div>
+            <div style="font-size:10px;color:var(--text-muted)">Meets with dev needs</div>
+          </div>
+          <div class="hq-card mis" onclick="selectHQ(this)" style="padding:12px 14px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer">
+            <div style="font-size:14px;margin-bottom:3px">⚠️</div>
+            <div style="font-size:11px;font-weight:700;color:var(--red)">Mis-Hire</div>
+            <div style="font-size:10px;color:var(--text-muted)">Did not meet expectations</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div>
+      <div style="font-size:11px;font-weight:700;color:var(--text-sub);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Overall Comment</div>
+      <textarea class="form-input form-textarea" style="min-height:80px" placeholder="Summarize overall probation assessment — delivery highlights, behavioral observations, risks, and forward-looking recommendation.">Strong delivery on product experiments. Growth KPIs mostly met with one miss on DAU — addressed by exec team context, not individual performance. Culture fit strong. Recommend confirm with light development plan on executive stakeholder communication.</textarea>
+    </div>
+
+    <div style="height:70px"></div><!-- spacer for sticky bar -->
+
   </div>
 </div>
 
 </div>
-<div style="padding-bottom:70px;"></div>`; }
+
+<!-- STICKY ACTION BAR -->
+<div class="sticky-action-bar">
+  <div style="flex:1">
+    <div style="font-size:11px;font-weight:700;color:var(--text-main)">Probation evaluation · Đinh Thị Huyền Thương · G6 · Senior PM</div>
+    <div style="font-size:10px;color:var(--text-muted);margin-top:1px">Select employment status and quality rating to submit</div>
+  </div>
+  <button class="btn-secondary" onclick="alert('Sent to HRBP for calibration review')">📤 Send to HRBP</button>
+  <button class="btn-primary" onclick="alert('Decision submitted to HRBP and HR·TA for records')">✅ Submit Decision</button>
+</div>
+
+<div style="padding-bottom:20px;"></div>`; }
 
 // helpers: probation phase switching
 function switchProbPhase(idx) {
@@ -5387,22 +5710,67 @@ function selectSeniority(el) {
 function selectRecTI(el, val) {
   el.closest('.rec-options').querySelectorAll('.rec-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
-  const levelRow = document.getElementById('ti-candidate-level');
-  if (levelRow) {
-    levelRow.style.display = (val === 'hire' || val === 'aware') ? 'flex' : 'none';
-  }
+  // candidate level section now handled by selectCandLevel2
 }
 function selectDec(el) {
   el.closest('.decision-grid').querySelectorAll('.decision-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
 }
+function probAddRiskRow() {
+  var table = document.getElementById('prob-risk-table');
+  if (!table) return;
+  var n = table.rows.length;
+  var tr = document.createElement('tr');
+  tr.innerHTML = '<td><input class="form-input" placeholder="Risk / Concern ' + n + '..."/></td>' +
+    '<td><select class="form-input form-select" style="font-size:11px"><option>Hiring risk</option><option>New risk</option></select></td>' +
+    '<td><select class="form-input form-select" style="font-size:11px"><option>HIGH</option><option>MID</option><option selected>LOW</option></select></td>' +
+    '<td><input class="form-input" placeholder="Observable evidence..."/></td>' +
+    '<td><input class="form-input" placeholder="Action plan..."/></td>' +
+    '<td><button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:2px 4px">×</button></td>';
+  table.appendChild(tr);
+}
+
+function probFlagUpdate(sel) {
+  var row = sel.closest('div[style*="background:white"]');
+  if (!row) return;
+  var val = sel.value;
+  row.style.borderLeft = val === 'Did not materialize ✓' ? '3px solid var(--green)' :
+    val === 'Impacting performance ⚠' ? '3px solid var(--red)' : '3px solid var(--amber)';
+}
+
+function selectProbDecision(el, group) {
+  var container = el.closest('[style*="flex-direction:column"]') || el.parentElement;
+  container.querySelectorAll('.prob-dec-row').forEach(function(r){
+    r.style.borderColor = 'var(--border)';
+    r.style.background = '';
+    var dot = r.querySelector('div[style*="border-radius:50%"]');
+    if (dot) { dot.style.background=''; dot.style.borderColor='var(--border)'; dot.innerHTML=''; }
+  });
+  el.style.borderColor = 'var(--green)';
+  el.style.background = 'var(--green-lt)';
+  var dot = el.querySelector('div[style*="border-radius:50%"]');
+  if (dot) {
+    dot.style.borderColor = 'var(--green)';
+    dot.style.background = 'var(--green)';
+    dot.style.display = 'flex'; dot.style.alignItems = 'center'; dot.style.justifyContent = 'center';
+    dot.innerHTML = '<div style="width:5px;height:5px;border-radius:50%;background:white"></div>';
+  }
+}
+
 function selectHQ(el) {
   el.closest('.hq-options').querySelectorAll('.hq-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
 }
 function selectOutcome(el) {
-  el.closest('.form-section').querySelectorAll('.check-row').forEach(c=>c.classList.remove('checked'));
-  el.classList.add('checked');
+  var container = el.closest('[style*="flex-direction:column"]') || el.parentElement;
+  container.querySelectorAll('.outcome-row,.check-row').forEach(function(r){
+    r.classList.remove('selected-outcome','checked');
+    r.style.borderColor = '';
+    r.style.background = '';
+  });
+  el.classList.add('selected-outcome');
+  el.style.borderColor = 'var(--green)';
+  el.style.background = 'var(--green-lt)';
 }
 
 // ── AI QUESTION PANEL ──────────────────────────────
@@ -5576,116 +5944,126 @@ function switchProbView(idx) {
 
 // ── REF CHECK GRADE-DRIVEN HELPERS ──────────────────
 function refCheckSectionNote() {
-  const d = gradeToRefDepth(jobData.grade);
-  const dims = jobData.grade <= 4
-    ? 'Performance & Judgment (Q4-7) + People Maturity (Q8-9) + Overall (Q10)'
-    : jobData.grade === 5
-    ? 'Performance & Judgment (Q4-7) + People Maturity (Q8-9) + Leadership basic (Q10) + Overall (Q11)'
-    : 'Performance & Judgment (Q4-8) + People Maturity (Q9-12) + Leadership full (Q13-14) + Overall (Q15)';
-  return `${d.label} level · ${d.time} · ${dims}`;
+  const g = jobData.grade;
+  const d = gradeToRefDepth(g);
+  if (g <= 3) return 'Baseline · ' + d.time + ' · D1: Performance & Judgment (Q4–7) · D2: People Maturity (Q8–9) · Overall (Q10)';
+  if (g === 4) return 'Standard · ' + d.time + ' · D1: Performance & Judgment (Q4–7) · D2: People Maturity (Q8–9) · D3: Leadership basic (Q10) · Overall (Q11)';
+  if (g === 5) return 'Standard · ' + d.time + ' · D1: Performance & Judgment (Q4–7) · D2: People Maturity (Q8–9) · D3: Leadership (Q10) · Overall (Q11)';
+  return 'Comprehensive · ' + d.time + ' · D1: Performance & Judgment (Q4–9) · D2: People Maturity (Q10–11) · D3: Leadership full (Q12–13) · Overall (Q14)';
 }
-
 function q(n, text) { return `<div class="ref-question">${n}. ${text}</div>`; }
 
 function refCheckQuestions() {
   const g = jobData.grade;
-  const isBaseline      = g <= 4;   // G0-4: Individual Contributor / Junior
-  const isStandard      = g === 5;  // G5: Senior IC / Sr. Team Leader
-  const isComprehensive = g >= 6;   // G6+: Manager & Above
+  const isBaseline      = g <= 3;   // G1-3: Individual Contributor Baseline
+  const isStandard4     = g === 4;  // G4: Senior IC / Team Leader - Standard
+  const isStandard5     = g === 5;  // G5: Senior IC / Sr. Team Leader - Standard+
+  const isComprehensive = g >= 6;   // G6+: Manager & Above - Comprehensive
 
-  // Verification Q1-3 handled in Section 1 — not repeated here
-  const verSection = '';
-
-  // ── Dimension 1: Performance & Judgment ──
-  const d1 = isBaseline ? [
-    'Thinking about the role where you worked with this person, how effectively did they deliver on their core responsibilities and objectives?',
-    'How well did they follow instructions, processes and agreed ways of working?',
-    'What are this person\'s key strengths in delivering their work?',
-    'Are there any areas where they could improve their performance?',
-  ] : isStandard ? [
-    'Thinking about the role where you worked with this person, how effectively did they deliver on their core responsibilities and objectives?',
-    'How effective was their judgment when handling priorities or making decisions?',
-    'What are this person\'s key strengths in delivering their work?',
-    'Are there any areas where they could improve their performance?',
-  ] : [
-    'Thinking about the role where you worked with this person, how effectively did they deliver on their core responsibilities and objectives?',
-    'What were some examples of results or impact they delivered?',
-    'When difficult trade-offs were required (for example speed vs quality or short-term vs long-term priorities), how effectively did this person demonstrate sound judgment and make decisions?',
-    'Can you share an example of how they handled an important decision?',
-    'How well were they able to operate independently when dealing with complex situations, ambiguity, or pressure?',
-  ];
-
-  // ── Dimension 2: People Maturity ──
-  const d2 = isBaseline ? [
-    'How effectively did they collaborate with colleagues and support team goals?',
-    'How effectively did they respond to feedback and improve their work?',
-  ] : isStandard ? [
-    'How effectively did they collaborate with colleagues and stakeholders across teams?',
-    'When disagreements or issues arose, how effectively did they handle the situation?',
-  ] : [
-    'When things did not go well—either their own work or their team\'s performance—how effectively did this person take accountability and drive improvement?',
-    'How effectively did they work with stakeholders and handle disagreements or conflicts when they occurred?',
-    'What distinguishes this person from other managers or directors you\'ve worked with? Would you consider this a strength, a risk, or both?',
-    'In what type of environment or organization do you think this person performs best? Are there situations where they may struggle?',
-  ];
-
-  // ── Dimension 3: Leadership (G5+ only) ──
-  const d3 = isStandard ? [
-    'If applicable, how effectively did they guide or support junior colleagues?',
-  ] : isComprehensive ? [
-    'How effective were they at developing or coaching people on their team?',
-    'In situations where they did not have direct authority, how well were they able to influence outcomes or align people? What approach did they usually rely on most—data, relationships, persuasion, or position?',
-  ] : null;
-
-  // ── Ref count & profile per tier ──
-  const refCount   = isBaseline ? '1 referee' : '2 referees';
-  const refProfile = isBaseline
-    ? 'Direct Manager or Senior Peer'
-    : isStandard
-    ? 'Direct Manager or Cross-functional Stakeholder / Peer'
-    : 'Direct Manager + Cross-functional Stakeholder/Peer + optional Skip-level Manager';
-
-  // ── Build question numbering (Q4 onwards) ──
-  let n = 4;
-  const d1Html = d1.map(t => q(n++, t)).join('\n      ');
-  const d2Html = d2.map(t => q(n++, t)).join('\n      ');
-  const d3Html = d3 ? d3.map(t => q(n++, t)).join('\n      ') : '';
-  const overallQ = n;
-
-  let html = `
-    <div style="background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;gap:16px;flex-wrap:wrap;">
-      <div style="font-size:11px;color:var(--text-sub);"><span style="font-weight:700;color:var(--text-main);">Depth:</span> ${gradeToRefDepth(g).label} · ${gradeToRefDepth(g).time}</div>
-      <div style="font-size:11px;color:var(--text-sub);"><span style="font-weight:700;color:var(--text-main);">Required refs:</span> ${refCount}</div>
-      <div style="font-size:11px;color:var(--text-sub);"><span style="font-weight:700;color:var(--text-main);">Referee profile:</span> ${refProfile}</div>
-    </div>
-
-    <div class="ref-dim">
-      <div class="ref-dim-title">📈 Dimension 1: Performance &amp; Judgment <div class="star-row" data-val="4" style="margin-left:auto">★★★★☆</div></div>
-      ${d1Html}
-      <textarea class="form-input form-textarea" style="margin-top:10px" placeholder="Notes from referee..."></textarea>
-    </div>
-
-    <div class="ref-dim">
-      <div class="ref-dim-title">🤝 Dimension 2: People Maturity <div class="star-row" data-val="4" style="margin-left:auto">★★★★☆</div></div>
-      ${d2Html}
-      <textarea class="form-input form-textarea" style="margin-top:10px" placeholder="Notes from referee..."></textarea>
-    </div>`;
-
-  if (d3) {
-    html += `
-    <div class="ref-dim">
-      <div class="ref-dim-title">👑 Dimension 3: Leadership <div class="star-row" data-val="3" style="margin-left:auto">★★★☆☆</div></div>
-      ${d3Html}
-      <textarea class="form-input form-textarea" style="margin-top:10px" placeholder="Notes from referee..."></textarea>
-    </div>`;
+  function mkDim(title, color, qs) {
+    return '<div class="ref-dim" style="margin-bottom:18px">' +
+      '<div class="ref-dim-title" style="color:' + color + ';margin-bottom:8px">' + title + '</div>' +
+      qs.map(function(q, i) {
+        var qNum = i + 4;
+        return '<div class="ref-question" style="margin-bottom:8px">' +
+          '<div style="font-size:11px;font-weight:700;color:var(--text-main);margin-bottom:6px">Q' + qNum + '. ' + q + '</div>' +
+          '<div style="display:grid;grid-template-columns:100px 1fr;gap:8px;align-items:center;margin-bottom:4px">' +
+            '<div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase">Rating (1–5)</div>' +
+            '<div class="star-row" data-val="0">☆☆☆☆☆</div>' +
+          '</div>' +
+          '<textarea class="form-input form-textarea" style="min-height:46px" placeholder="Qualitative notes from referee..."></textarea>' +
+        '</div>';
+      }).join('') +
+    '</div>';
   }
 
-  html += `
-    <div class="ref-dim" style="background:var(--brand-xl);border:1.5px solid var(--brand-lt);">
-      <div class="ref-dim-title" style="color:var(--brand-dk);">🏁 Overall Recommendation</div>
-      <div class="ref-question">${overallQ}. How confident would you be recommending this person for a role of equal or greater scope?</div>
-      <textarea class="form-input form-textarea" style="margin-top:10px" placeholder="Overall summary from referee..."></textarea>
-    </div>`;
+  let d1Qs, d2Qs, d3Qs;
+
+  if (isBaseline) {
+    d1Qs = [
+      'How effectively did they deliver on their responsibilities and objectives?',
+      'How well did they follow instructions, processes and agreed ways of working?',
+      'What are this person\'s key strengths in delivering their work?',
+      'Are there any areas where they could improve their performance?',
+    ];
+    d2Qs = [
+      'How effectively did they collaborate with colleagues and support team goals?',
+      'How effectively did they respond to feedback and improve their work?',
+    ];
+    d3Qs = null;
+  } else if (isStandard4) {
+    d1Qs = [
+      'How effectively did they deliver on their responsibilities and objectives?',
+      'How effective was their judgment when handling priorities or making decisions?',
+      'What are this person\'s key strengths in delivering their work?',
+      'Are there any areas where they could improve their performance?',
+    ];
+    d2Qs = [
+      'How effectively did they collaborate with colleagues and stakeholders across teams?',
+      'When disagreements or issues arose, how effectively did they handle the situation?',
+    ];
+    d3Qs = [
+      'If applicable, how effectively did they guide or support junior colleagues?',
+    ];
+  } else if (isStandard5) {
+    d1Qs = [
+      'How effectively did they deliver on their responsibilities and objectives?',
+      'How effective was their judgment when handling priorities or making decisions?',
+      'What are this person\'s key strengths in delivering their work?',
+      'Are there any areas where they could improve their performance?',
+    ];
+    d2Qs = [
+      'How effectively did they collaborate with colleagues and stakeholders across teams?',
+      'When disagreements or issues arose, how effectively did they handle the situation?',
+    ];
+    d3Qs = [
+      'If applicable, how effectively did they guide or support junior colleagues?',
+    ];
+  } else {
+    // Comprehensive G6+
+    d1Qs = [
+      'How effectively did they deliver on their responsibilities and objectives?',
+      'What were some examples of results or impact they delivered?',
+      'When difficult trade-offs were required (e.g. speed vs quality, short-term vs long-term), how effectively did this person demonstrate sound judgment and make decisions?',
+      'What are this person\'s key strengths in delivering their work?',
+      'Are there any areas where they could improve their performance?',
+      'How well were they able to operate independently when dealing with complex situations, ambiguity, or pressure?',
+    ];
+    d2Qs = [
+      'How effectively did this person take accountability and drive improvement when things did not go well?',
+      'How effectively did they work with stakeholders and handle disagreements or conflicts when they occurred?',
+    ];
+    d3Qs = [
+      'How effective were they at developing or coaching people on their team?',
+      'In situations where they did not have direct authority, how well were they able to influence outcomes or align people?',
+    ];
+  }
+
+  var html = mkDim('Dimension 1 — Performance & Judgment', 'var(--brand)', d1Qs);
+  html += mkDim('Dimension 2 — People Maturity', 'var(--blue)', d2Qs);
+  if (d3Qs) html += mkDim('Dimension 3 — Leadership', 'var(--green)', d3Qs);
+
+  // Overall recommendation Q (question number based on grade)
+  var overallQ = isBaseline ? 10 : isStandard4 ? 11 : isStandard5 ? 11 : 14;
+  html += '<div class="ref-dim" style="margin-bottom:0">' +
+    '<div class="ref-dim-title" style="margin-bottom:8px">Overall Recommendation</div>' +
+    '<div class="ref-question" style="margin-bottom:10px">' +
+      '<div style="font-size:11px;font-weight:700;color:var(--text-main);margin-bottom:8px">Q' + overallQ + '. How confident would you be recommending this person for a role of equal or greater scope?</div>' +
+      '<div style="display:flex;flex-direction:column;gap:5px">' +
+        ['Strongly Recommend — verified employment and strong positive signals across dimensions with high referee confidence',
+         'Recommend — verified information and generally positive feedback with manageable development areas',
+         'Recommend with Consideration — mixed feedback or contextual risks requiring hiring manager awareness',
+         'Concern / Further Review — verification issues or significant concerns raised by referee'].map(function(opt, i) {
+          var icons = ['⭐','✅','⚡','🔴'];
+          var vals = ['strong','recommend','consider','concern'];
+          return '<label onclick="selectOutcome(this)" style="display:flex;align-items:flex-start;gap:10px;padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .12s,background .12s" class="outcome-row' + (i===1?' selected-outcome':'') + '" style="' + (i===1?'border-color:var(--green);background:var(--green-lt)':'') + '">' +
+            '<div style="font-size:14px;flex-shrink:0;margin-top:1px">' + icons[i] + '</div>' +
+            '<div style="font-size:11px;font-weight:600;color:var(--text-main)">' + opt + '</div>' +
+          '</label>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+  '</div>';
 
   return html;
 }
@@ -5747,10 +6125,10 @@ function showInterviewDetail(round) {
         <button onclick="document.getElementById('iv-detail-modal').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:22px;color:var(--text-muted);line-height:1;padding:0 4px;">×</button>
       </div>
       <div style="padding:20px 24px;">
-        <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Technical capability assessment</div>
+        <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Job Fit Assessment</div>
         <table style="width:100%;border-collapse:collapse;margin-bottom:16px;border-radius:8px;overflow:hidden;">
           <tr style="background:var(--slate-lt);">
-            <th style="padding:8px 12px;font-size:10px;font-weight:700;text-align:left;width:24%;">Competency</th>
+            <th style="padding:8px 12px;font-size:10px;font-weight:700;text-align:left;width:24%;">Dimension</th>
             <th style="padding:8px 12px;font-size:10px;font-weight:700;text-align:left;width:80px;">Rating</th>
             <th style="padding:8px 12px;font-size:10px;font-weight:700;text-align:left;">Evidence</th>
           </tr>
@@ -8053,6 +8431,12 @@ function openUploadModal() { alert('CV upload modal — coming soon in next spri
 function pageJDGuideline() { return `
 <div style="max-width:760px;margin:0 auto;padding:24px 20px 120px;">
 
+  <!-- SKIP BAR -->
+  <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+    <button onclick="jdGuidelineSeen=true; render()" style="background:none;border:0.5px solid var(--border);border-radius:20px;color:var(--text-muted);font-size:11px;cursor:pointer;padding:5px 14px;font-family:inherit">Already know this — Skip to form →</button>
+  </div>
+
+
   <!-- HERO -->
   <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:24px;">
     <div style="width:56px;height:56px;background:var(--brand);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">📝</div>
@@ -8202,6 +8586,7 @@ function pageJDGuideline() { return `
 <div style="position:sticky;bottom:0;background:white;border-top:1px solid var(--border);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;z-index:20;">
   <div style="font-size:12px;color:var(--text-muted);">You can revisit this guide anytime from the JD Bank.</div>
   <button class="btn-primary" onclick="jdGuidelineSeen=true; render()">I understand — Start writing JD →</button>
+  <button onclick="jdGuidelineSeen=true; render()" style="background:none;border:none;color:var(--text-muted);font-size:12px;cursor:pointer;padding:8px 12px;font-family:inherit">Skip guideline →</button>
 </div>
 `; }
 
@@ -9401,6 +9786,53 @@ function closeTopModalAndAnalyze() {
   currentStep = 3;
   render();
   setTimeout(function() { switchIntelTab(1); }, 100);
+}
+
+
+function selectCandLevel(el) {
+  var grid = el.closest('[style*="grid-template-columns"]') || el.parentElement;
+  if (grid) grid.querySelectorAll('.rec-card').forEach(function(c){ c.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function selectRecTI2(el, val) {
+  var wrap = el.closest('[style*="grid-template-columns"]') || el.parentElement;
+  if (wrap) wrap.querySelectorAll('.rec-ti-row').forEach(function(r){
+    r.style.background = '';
+    r.style.borderColor = 'var(--border)';
+    r.classList.remove('selected-ti');
+    var dot = r.querySelector('.rec-dot');
+    if (dot) { dot.style.background=''; dot.innerHTML=''; dot.style.borderColor='var(--border)'; }
+  });
+  el.style.background = 'var(--brand-xl)';
+  el.style.borderColor = 'var(--brand)';
+  el.classList.add('selected-ti');
+  var dot = el.querySelector('.rec-dot');
+  if (dot) {
+    dot.style.borderColor = val==='nohire' ? 'var(--red)' : val==='aware' ? 'var(--amber)' : '#639922';
+    dot.style.background = val==='nohire' ? 'var(--red)' : val==='aware' ? 'var(--amber)' : '#639922';
+    dot.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:white"></div>';
+  }
+}
+
+function selectCandLevel2(el) {
+  var wrap = el.closest('[style*="grid-template-columns"]') || el.parentElement;
+  if (wrap) wrap.querySelectorAll('.cand-level-row').forEach(function(r){
+    r.style.background = '';
+    r.style.borderColor = 'var(--border)';
+    r.classList.remove('selected-cl');
+    var dot = r.querySelector('.cl-dot');
+    if (dot) { dot.style.background=''; dot.innerHTML=''; dot.style.borderColor='var(--border)'; }
+  });
+  el.style.background = 'var(--slate-lt)';
+  el.style.borderColor = 'var(--slate)';
+  el.classList.add('selected-cl');
+  var dot = el.querySelector('.cl-dot');
+  if (dot) {
+    dot.style.borderColor = 'var(--text-muted)';
+    dot.style.background = 'var(--text-muted)';
+    dot.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:white"></div>';
+  }
 }
 
 </script>
